@@ -275,6 +275,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     # Build DeepEP wheel
     git clone "${DEEPEP_URL}" deepep && \
     cd deepep && \
+    git checkout v1.2.1 && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf deepep && \
     \
