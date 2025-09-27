@@ -14,7 +14,7 @@ ARG PYTHON_VERSION
 
 ARG USE_SCCACHE=true
 
-RUN cat > /usr/local/bin/setup-sccache << 'EOF'
+RUN cat > /usr/local/bin/setup-sccache <<'EOF'
 #!/bin/bash
 if [ "${USE_SCCACHE}" = "true" ]; then
     # Set up AWS credentials if secrets are available
@@ -246,6 +246,8 @@ WORKDIR /workspace/vllm
 
 # Install DeepEP and DeepGEMM dependencies
 ARG DEEPEP_URL="https://github.com/deepseek-ai/DeepEP"
+# ARG DEEPEP_VERSION= "v1.2.1"
+ARG DEEPEP_VERSION= "da6ca24ef7c2594e058def142adfb8f2e31a7f85"
 ARG DEEPGEMM_URL="https://github.com/deepseek-ai/DeepGEMM"
 ARG PPLX_KERNELS_URL="https://github.com/perplexityai/pplx-kernels"
 
@@ -275,7 +277,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     # Build DeepEP wheel
     git clone "${DEEPEP_URL}" deepep && \
     cd deepep && \
-    git checkout v1.2.1 && \
+    git checkout ${DEEPEP_VERSION} && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf deepep && \
     \
