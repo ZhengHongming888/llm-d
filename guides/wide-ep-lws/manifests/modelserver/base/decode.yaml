@@ -42,7 +42,7 @@ spec:
           
         containers:
         - name: vllm-worker
-          image: quay.io/tms/llm-d-dev:0.3.0-a-3d56f1f12cc94bfa9795bc2030ca2b2f9c27533f
+          image: quay.io/tms/llm-d-dev:0.3.0-44d5871d41797bfc38f1e2620bdd562dc041a568
           securityContext:
             capabilities:
               add:
@@ -80,6 +80,7 @@ spec:
                 --data-parallel-start-rank $START_RANK \
                 --kv_transfer_config '{"kv_connector":"NixlConnector",
                                         "kv_role":"kv_both"}' \
+                --async-scheduling \
                 --enable-dbo \
                 --dbo-decode-token-threshold 32 \
                 --enable-eplb \
@@ -87,12 +88,16 @@ spec:
                                 "step_interval":"3000",
                                 "num_redundant_experts":"32",
                                 "log_balancedness":"False"}' \
-                --compilation_config '{"cudagraph_mode": "full_decode_only"}'
+                --compilation_config '{"cudagraph_mode": "FULL_DECODE_ONLY"}'
           env:
           - name: VLLM_CACHE_ROOT
             value: "/vllm-cache"
           - name: FLASHINFER_BASE_DIR
             value: "/vllm-cache/flashinfer"
+          - name: VLLM_LOGGING_LEVEL
+            value: INFO
+          - name: VLLM_SERVER_DEV_MODE
+            value: "1"
 
             # vLLM warms up DeepGEMM kernels to avoid high-variance slowdowns due to jitting.
             # Especially important for the prefill instances, affecting TTFT.
@@ -133,8 +138,6 @@ spec:
             value: eth0
           - name: NCCL_IB_HCA
             value: ibp
-          - name: VLLM_LOGGING_LEVEL
-            value: INFO
           - name: HF_HUB_CACHE
             value: /huggingface-cache
           - name: VLLM_NIXL_SIDE_CHANNEL_HOST
