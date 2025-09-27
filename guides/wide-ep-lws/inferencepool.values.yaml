@@ -15,9 +15,8 @@ inferenceExtension:
       - type: prefill-header-handler
       - type: prefill-filter
       - type: decode-filter
-      - type: random-picker
-        parameters:
-          maxNumOfEndpoints: 1
+      - type: max-score-picker
+      - type: queue-scorer
       - type: pd-profile-handler
         parameters:
           threshold: 0
@@ -26,11 +25,15 @@ inferenceExtension:
       - name: prefill
         plugins:
         - pluginRef: prefill-filter
-        - pluginRef: random-picker
+        - pluginRef: queue-scorer
+          weight: 1
+        - pluginRef: max-score-picker
       - name: decode
         plugins:
         - pluginRef: decode-filter
-        - pluginRef: random-picker
+        - pluginRef: queue-scorer
+          weight: 1
+        - pluginRef: max-score-picker
   flags:
     - name: v
       value: 1
@@ -41,3 +44,4 @@ inferencePool:
   modelServers:
     matchLabels:
       llm-d.ai/model: DeepSeek-R1-0528
+
