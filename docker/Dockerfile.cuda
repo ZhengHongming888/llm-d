@@ -408,9 +408,9 @@ RUN --mount=type=cache,target=/var/cache/git \
         # Build from source but pull 
         if [ "${VLLM_USE_PRECOMPILED}" = "1" ] && [ "${VLLM_REPO}" = "https://github.com/vllm-project/vllm.git" ]; then \
             export VLLM_USE_PRECOMPILED=1; \
-            export VLLM_PRECOMPILED_WHEEL_LOCATION="https://wheels.vllm.ai/${VLLM_COMMIT_SHA}/vllm-${VLLM_VER}-${PYTAG}-${MANYLINUX}_${ARCH}.whl"; \
+            export VLLM_PRECOMPILED_WHEEL_LOCATION="https://wheels.vllm.ai/${VLLM_COMMIT_SHA}/vllm-1.0.0.dev-cp38-abi3-manylinux2014_x86_64.whl"; \
         fi; \
-        uv pip install -e /opt/vllm-source; \
+        uv pip install -e .; \
     fi; \
     uv pip install "nvidia-nccl-cu12>=2.26.2.post1" && \
     rm -rf /tmp/wheels
