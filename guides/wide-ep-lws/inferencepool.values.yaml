@@ -15,8 +15,9 @@ inferenceExtension:
       - type: prefill-header-handler
       - type: prefill-filter
       - type: decode-filter
-      - type: max-score-picker
-      - type: queue-scorer
+      - type: random-picker
+        parameters:
+          maxNumOfEndpoints: 1
       - type: pd-profile-handler
         parameters:
           threshold: 0
@@ -25,15 +26,11 @@ inferenceExtension:
       - name: prefill
         plugins:
         - pluginRef: prefill-filter
-        - pluginRef: queue-scorer
-          weight: 1
-        - pluginRef: max-score-picker
+        - pluginRef: random-picker
       - name: decode
         plugins:
         - pluginRef: decode-filter
-        - pluginRef: queue-scorer
-          weight: 1
-        - pluginRef: max-score-picker
+        - pluginRef: random-picker
   flags:
     - name: v
       value: 1

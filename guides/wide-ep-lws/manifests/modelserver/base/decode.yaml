@@ -9,7 +9,7 @@ metadata:
 spec:
   replicas: 1
   leaderWorkerTemplate:
-    size: 4
+    size: 9
     workerTemplate:
       metadata:
         labels:
@@ -23,7 +23,7 @@ spec:
               - --port=8000
               - --vllm-port=8200
               - --connector=nixlv2
-              - -v=5
+              - -v=1
               - --secure-proxy=false
             image: ghcr.io/llm-d/llm-d-routing-sidecar:v0.2.0
             imagePullPolicy: Always
@@ -42,7 +42,7 @@ spec:
           
         containers:
         - name: vllm-worker
-          image: quay.io/tms/llm-d-dev:0.3.0-44d5871d41797bfc38f1e2620bdd562dc041a568
+          image: quay.io/tms/llm-d-dev:0.3.0-203cb833c53a87003e42be451653cd9b0b86a098
           securityContext:
             capabilities:
               add:
@@ -96,8 +96,12 @@ spec:
             value: "/vllm-cache/flashinfer"
           - name: VLLM_LOGGING_LEVEL
             value: INFO
-          - name: VLLM_SERVER_DEV_MODE
-            value: "1"
+          - name: VLLM_MOE_DP_CHUNK_SIZE
+            value: "512"
+          #- name: VLLM_SERVER_DEV_MODE
+          #  value: "1"
+          #- name: VLLM_TORCH_PROFILER_DIR
+          #  value: "/traces"
 
             # vLLM warms up DeepGEMM kernels to avoid high-variance slowdowns due to jitting.
             # Especially important for the prefill instances, affecting TTFT.
@@ -105,8 +109,6 @@ spec:
           #- name: VLLM_SKIP_DEEP_GEMM_WARMUP
           #  value: "1"
 
-          #- name: VLLM_MOE_DP_CHUNK_SIZE
-          #  value: "512"
           - name: DP_SIZE_LOCAL
             value: "8"
           - name: TRITON_LIBCUDA_PATH
