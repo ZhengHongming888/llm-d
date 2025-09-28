@@ -226,7 +226,7 @@ WORKDIR /workspace
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=e017120ed146cc3069d18428322d67881cb95e67
+ARG VLLM_COMMIT_SHA=4c347044c90da878c9bacb33aaf6cba0fc01dd7c
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
@@ -246,8 +246,8 @@ WORKDIR /workspace/vllm
 
 # Install DeepEP and DeepGEMM dependencies
 ARG DEEPEP_URL="https://github.com/deepseek-ai/DeepEP"
-# ARG DEEPEP_VERSION= "v1.2.1"
-ARG DEEPEP_VERSION= "da6ca24ef7c2594e058def142adfb8f2e31a7f85"
+ARG DEEPEP_VERSION= "v1.2.1"
+# ARG DEEPEP_VERSION= "da6ca24ef7c2594e058def142adfb8f2e31a7f85"
 ARG DEEPGEMM_URL="https://github.com/deepseek-ai/DeepGEMM"
 ARG PPLX_KERNELS_URL="https://github.com/perplexityai/pplx-kernels"
 
@@ -367,7 +367,7 @@ COPY --from=builder /wheels/*.whl /tmp/wheels/
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=e017120ed146cc3069d18428322d67881cb95e67
+ARG VLLM_COMMIT_SHA=4c347044c90da878c9bacb33aaf6cba0fc01dd7c
 
 ARG VLLM_PREBUILT=0
 
