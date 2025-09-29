@@ -16,8 +16,11 @@ Please join [SIG-Observability](https://github.com/llm-d/llm-d/blob/dev/SIGS.md#
 
 ### Helmfile Integration
 
-All [llm-d guides](../../guides/README.md) include the option to enable Prometheus PodMonitor creation for scraping vLLM metrics and ServiceMonitor creation
-for scraping EPP (Endpoint Picker) metrics. With guided examples, monitoring is enabled by default. If running on GKE, monitoring is also enabled by default
+All [llm-d guides](../../guides/README.md) have monitoring enabled by default, supporting multiple monitoring stacks depending on the environment. We provide out of box monitoring configurations for scraping the [Endpoint Picker (EPP)](https://github.com/kubernetes-sigs/gateway-api-inference-extension/tree/main/docs/proposals/004-endpoint-picker-protocol) metrics, and vLLM metrics.
+
+See the vLLM Metrics and EPP Metrics sections below for how to further config or disable monitoring.
+
+If running on GKE, monitoring is also enabled by default
 and is set with `provider.name=gke`. When _not_ on GKE, Prometheus custom resources must exist in the cluster. Ensure this matches your environment and if not,
 set `enabled=false` in `[prefill,decode].monitoring.podmonitor` and `prometheus=false` in `inferenceExtension.monitoring` values sections as listed below.
 
@@ -54,11 +57,9 @@ EPP provides additional metrics for request routing, scheduling latency, and plu
 # In your gaie-*/values.yaml files
 inferenceExtension:
   monitoring:
-    prometheus:
+    gke:
       enabled: true
-OR
-
-provider
+provider:
   name: gke
 ```
 
