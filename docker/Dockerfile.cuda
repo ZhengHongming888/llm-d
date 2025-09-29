@@ -248,8 +248,8 @@ WORKDIR /workspace/vllm
 # Install DeepEP and DeepGEMM dependencies
 ARG DEEPEP_REPO="https://github.com/deepseek-ai/DeepEP"
 # Pin to commit at stable v1.2.1 tag
-ARG DEEPEP_VERSION= "9af0e0d0e74f3577af1979c9b9e1ac2cad0104ee"
-# ARG DEEPEP_VERSION= "da6ca24ef7c2594e058def142adfb8f2e31a7f85" # claytons stable
+ARG DEEPEP_VERSION="9af0e0d0e74f3577af1979c9b9e1ac2cad0104ee"
+# ARG DEEPEP_VERSION="da6ca24ef7c2594e058def142adfb8f2e31a7f85" # claytons stable
 ARG DEEPGEMM_REPO="https://github.com/deepseek-ai/DeepGEMM"
 ARG PPLX_KERNELS_REPO="https://github.com/perplexityai/pplx-kernels"
 
@@ -279,7 +279,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     # Build DeepEP wheel
     git clone "${DEEPEP_REPO}" deepep && \
     cd deepep && \
-    git checkout ${DEEPEP_VERSION} && \
+    git checkout -q "${DEEPEP_VERSION}" && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf deepep && \
     \
