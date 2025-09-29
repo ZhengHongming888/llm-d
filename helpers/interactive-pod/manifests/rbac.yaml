@@ -82,7 +82,7 @@ metadata:
   name: interactive-pod-editor-binding
 subjects:
   - kind: ServiceAccount
-    name: intereactive-pod
+    name: interactive-pod
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

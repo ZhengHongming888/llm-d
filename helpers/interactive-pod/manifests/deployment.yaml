@@ -17,7 +17,7 @@ spec:
       labels:
         app: interactive-pod
     spec:
-      serviceAccountName: intereactive-pod
+      serviceAccountName: interactive-pod
       containers:
         - name: benchmark-runner
           # image: "ghcr.io/llm-d/interactive-pod:latest"
