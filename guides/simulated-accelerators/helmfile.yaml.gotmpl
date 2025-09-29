@@ -51,6 +51,8 @@ releases:
           apiVersion: {{ .Environment.Values.inferencePool.apiVersion }}
         inferenceExtension:
           monitoring:
+            gke:
+              enabled: true
             prometheus:
               enabled: false
     {{- else if or (eq .Environment.Name "istio") (eq .Environment.Name "default") }}

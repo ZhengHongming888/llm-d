@@ -61,6 +61,8 @@ releases:
           apiVersion: {{ .Environment.Values.inferencePool.apiVersion }}
         inferenceExtension:
           monitoring:
+            gke:
+              enabled: true
             prometheus:
               enabled: false
     {{- end }}
