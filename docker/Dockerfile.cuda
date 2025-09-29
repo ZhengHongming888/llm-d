@@ -399,7 +399,8 @@ RUN --mount=type=cache,target=/var/cache/git \
     git clone "${VLLM_REPO}" /opt/vllm-source && \
     git -C /opt/vllm-source fetch --depth=1 origin "${VLLM_COMMIT_SHA}" || true && \
     git -C /opt/vllm-source checkout -q "${VLLM_COMMIT_SHA}" && \
-    git config --system --add safe.directory /opt/vllm-source && \
+    echo "safe.directory=/opt/vllm-source" >> /home/vllm/.gitconfig && \
+    echo "safe.directory=/opt/vllm-source" >> /root/.gitconfig && \
     export WHEEL_URL="https://wheels.vllm.ai/${VLLM_COMMIT_SHA}/vllm-1.0.0.dev-cp38-abi3-manylinux1_x86_64.whl"; \
     if [ "${VLLM_PREBUILT}" = "1" ]; then \
         uv pip install "${WHEEL_URL}"; \
