@@ -42,7 +42,8 @@ spec:
               sizeLimit: 2Gi # 2Gi for NCCL 2.27 to be safe
         containers:
         - name: vllm-worker
-          image: ghcr.io/llm-d/llm-d-cuda-dev:pr-269@sha256:2e316933ba1da95d1bfb2c9087dda93583e22df786f051a29d135747a5a03b91
+          # image: quay.io/tms/llm-d-dev:0.3.0-44d5871d41797bfc38f1e2620bdd562dc041a568
+          image: ghcr.io/llm-d/llm-d-cuda-dev:pr-230@sha256:d8b50ce3dbf3a2be81b90629762f312abbc3c0785779b0bde75aaa0e52fc97f5
           securityContext:
             capabilities:
               add:
