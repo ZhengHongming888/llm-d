@@ -18,7 +18,7 @@ inferenceExtension:
     interval: "10s"
     # Service account token secret for authentication
     secret:
-      name: inference-gateway-sa-metrics-reader-secret
+      name: inference-scheduling-gateway-sa-metrics-reader-secret
     # Prometheus ServiceMonitor will be created when enabled for EPP metrics collection
     prometheus:
       enabled: true
