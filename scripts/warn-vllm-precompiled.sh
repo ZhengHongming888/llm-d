@@ -9,7 +9,6 @@ append_warning() {
   mkdir -p "$(dirname "$target")"
   touch "$target"
 
-  # Don't duplicate if already added
   if ! grep -q 'BEGIN vllm precompiled warning' "$target"; then
     cat >>"$target" <<EOF
 

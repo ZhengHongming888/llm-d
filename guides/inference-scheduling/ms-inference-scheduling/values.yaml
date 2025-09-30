@@ -33,7 +33,7 @@ decode:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: "ghcr.io/llm-d/llm-d-cuda-dev:sha-0580d3c@sha256:09cbe7eddf5dc060b81fd7152f21de5fddf6a923a61b2c2ade165c27f312aa2a"
+    image: "ghcr.io/llm-d/llm-d-cuda-dev:pr-230@sha256:744738e06eabc2dbf53b299d01572f149a25c752d31e7dd8bb828776c509076c"
     modelCommand: vllmServe
     args:
       - "--enforce-eager"
