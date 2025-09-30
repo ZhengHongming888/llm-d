@@ -345,6 +345,7 @@ RUN dnf install -y --allowerasing \
         procps-ng \
         git \
         curl \
+        jq \
         gcc && dnf clean all
 
 # Copy gdrcopy libraries from builder
@@ -402,14 +403,31 @@ RUN --mount=type=cache,target=/var/cache/git \
     uv pip install /tmp/wheels/*.whl && \
     git clone "${VLLM_REPO}" /opt/vllm-source && \
     git -C /opt/vllm-source fetch --depth=1 origin "${VLLM_COMMIT_SHA}" || true && \
-    git -C /opt/vllm-source checkout -q "${VLLM_COMMIT_SHA}" && \
-    echo "safe.directory=/opt/vllm-source" >> /home/vllm/.gitconfig && \
-    echo "safe.directory=/opt/vllm-source" >> /root/.gitconfig && \
-    export WHEEL_URL="https://wheels.vllm.ai/${VLLM_COMMIT_SHA}/vllm-1.0.0.dev-cp38-abi3-manylinux1_x86_64.whl"; \
+    git -C /opt/vllm-source checkout "${VLLM_COMMIT_SHA}" && \
+    test -f /home/vllm/.gitconfig || (touch /home/vllm/.gitconfig && chown vllm:root /home/vllm/.gitconfig) && \
+    printf "[safe]\n\tdirectory = /opt/vllm-source" >> /home/vllm/.gitconfig && \
+    test -f /root/.gitconfig || (touch /root/.gitconfig && chown root:root /root/.gitconfig) && \
+    printf "[safe]\n\tdirectory = /opt/vllm-source" >> /root/.gitconfig && \
+    export WHEEL_URL=$(pip install \
+        --no-cache-dir \
+        --no-index \
+        --no-deps \
+        --find-links "https://wheels.vllm.ai/${VLLM_COMMIT_SHA}/vllm/" \
+        --only-binary=:all: \
+        --pre vllm \
+        --dry-run \
+        --disable-pip-version-check \
+        -qqq \
+        --report - \
+        2>/dev/null | jq -r '.install[0].download_info.url'); \
     if [ "${VLLM_PREBUILT}" = "1" ]; then \
+        if [ -z "${WHEEL_URL}" ]; then \
+            echo "VLLM_PREBUILT set but no platform compatible wheel exists for: https://wheels.vllm.ai/${VLLM_COMMIT_SHA}/vllm/"; \
+            exit 1; \
+        fi; \
         uv pip install "${WHEEL_URL}"; \
     else \
-        if [ "${VLLM_USE_PRECOMPILED}" = "1" ] && curl -fsI --max-time 15 "${WHEEL_URL}" >/dev/null; then \
+        if [ "${VLLM_USE_PRECOMPILED}" = "1" ] && [ -n "${WHEEL_URL}" ]; then \
             echo "Using precompiled binaries and shared libraries for ${VLLM_COMMIT_SHA}."; \
             export VLLM_USE_PRECOMPILED=1; \
             export VLLM_PRECOMPILED_WHEEL_LOCATION="${WHEEL_URL}"; \
