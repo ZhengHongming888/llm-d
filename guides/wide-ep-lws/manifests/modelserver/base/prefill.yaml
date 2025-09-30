@@ -89,7 +89,7 @@ spec:
           - name: NCCL_IB_HCA
             value: ibp
           - name: VLLM_LOGGING_LEVEL
-            value: DEBUG
+            value: INFO
           - name: VLLM_NIXL_SIDE_CHANNEL_HOST
             valueFrom:
               fieldRef:

@@ -227,10 +227,7 @@ WORKDIR /workspace
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_REPO=https://github.com/neuralmagic/LMCache.git
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-# ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c" # CORRECT COMMIT FOR RELEASE
-
-# COMMIT FOR TESTING SWAPABILITY
-ARG VLLM_COMMIT_SHA="ef283548f75122b0e8ce49ce2548fbb49446d7c7"
+ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c"
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
@@ -250,9 +247,7 @@ WORKDIR /workspace/vllm
 
 # Install DeepEP and DeepGEMM dependencies
 ARG DEEPEP_REPO="https://github.com/deepseek-ai/DeepEP"
-# Pin to commit at stable v1.2.1 tag
 ARG DEEPEP_VERSION="v1.2.1"
-# ARG DEEPEP_VERSION="da6ca24ef7c2594e058def142adfb8f2e31a7f85" # claytons stable
 ARG DEEPGEMM_REPO="https://github.com/deepseek-ai/DeepGEMM"
 ARG PPLX_KERNELS_REPO="https://github.com/perplexityai/pplx-kernels"
 
@@ -381,10 +376,7 @@ RUN mkdir -p /opt/vllm-source && \
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA="0db8ae4746a207a72483d716b5f82545a2ead24b"
 ARG VLLM_REPO="https://github.com/vllm-project/vllm.git"
-# ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c" # CORRECT COMMIT FOR RELEASE
-
-# COMMIT FOR TESTING SWAPABILITY
-ARG VLLM_COMMIT_SHA="ef283548f75122b0e8ce49ce2548fbb49446d7c7"
+ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c"
 
 # Dictates if we should pull a production wheel for the vllm commit sha
 ARG VLLM_PREBUILT=0
@@ -474,9 +466,6 @@ ENV PATH="${VIRTUAL_ENV}/bin:/usr/local/nvidia/bin:${PATH}" \
     TORCH_NCCL_DUMP_ON_TIMEOUT=0 \
     VLLM_SKIP_P2P_CHECK=1 \
     VLLM_CACHE_ROOT=/tmp/vllm \
-    # NOTE: workaround for hang with XET. This should be removed 
-    # in a future release when we get to the bottom of the issue.
-    HF_HUB_DISABLE_XET=1 \
     UCX_MEM_MMAP_HOOK_MODE=none
 
 USER 2000
