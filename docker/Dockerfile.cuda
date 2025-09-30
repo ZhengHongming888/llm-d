@@ -227,7 +227,10 @@ WORKDIR /workspace
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_REPO=https://github.com/neuralmagic/LMCache.git
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=8ce5d3198d00631a76e1aa02a57947b46bc7218c
+# ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c" # CORRECT COMMIT FOR RELEASE
+
+# COMMIT FOR TESTING SWAPABILITY
+ARG VLLM_COMMIT_SHA="ef283548f75122b0e8ce49ce2548fbb49446d7c7"
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
@@ -377,7 +380,10 @@ RUN mkdir -p /opt/vllm-source && \
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA="0db8ae4746a207a72483d716b5f82545a2ead24b"
 ARG VLLM_REPO="https://github.com/vllm-project/vllm.git"
-ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c"
+# ARG VLLM_COMMIT_SHA="8ce5d3198d00631a76e1aa02a57947b46bc7218c" # CORRECT COMMIT FOR RELEASE
+
+# COMMIT FOR TESTING SWAPABILITY
+ARG VLLM_COMMIT_SHA="ef283548f75122b0e8ce49ce2548fbb49446d7c7"
 
 # Dictates if we should pull a production wheel for the vllm commit sha
 ARG VLLM_PREBUILT=0
@@ -391,8 +397,6 @@ ARG VLLM_USE_PRECOMPILED=1
     # 3) install vllm from source with pulling precomiled binaries (shared libraries) from the vllm wheels index - less flexible dev option, may or may not work swapping shas but faster than full editable
     # 2) install vllm from a wheel on the vllm wheels index - prod option, no flexbility
 RUN --mount=type=cache,target=/var/cache/git \
-    --mount=type=secret,id=aws_access_key_id \
-    --mount=type=secret,id=aws_secret_access_key \
     source /opt/vllm/bin/activate && \
     uv pip install nixl "nvshmem4py-cu${CUDA_MAJOR}" cuda-python 'huggingface_hub[hf_xet]' && \
     uv pip install /tmp/wheels/*.whl && \
