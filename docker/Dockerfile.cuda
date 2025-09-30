@@ -364,7 +364,8 @@ RUN python${PYTHON_VERSION} -m venv /opt/vllm && \
 COPY --from=builder /wheels/*.whl /tmp/wheels/
 
 # Create the vllm user
-RUN useradd --uid 2000 --gid 0 vllm
+RUN useradd --uid 2000 --gid 0 vllm && \
+    touch /home/vllm/.bashrc 
 
 # Create the vllm workspace with permissions to swap commits and remotes
 RUN mkdir -p /opt/vllm-source && \
@@ -383,6 +384,8 @@ ARG VLLM_PREBUILT=0
 # Dictates if we should pull precompiled binaries when installing vllm editably. These commits must be on main in vLLM.
 ARG VLLM_USE_PRECOMPILED=1
 
+ADD scripts/warn-vllm-precompiled.sh /opt/
+
 # Install cuda-python, nvshmem python bindings, xet
 # Install all compiled wheels (DeepEP, DeepGEMM, pplx-kernels, LMCache, nixl)
 # Installs vllm source. Supports three install modes:
@@ -394,12 +397,9 @@ RUN --mount=type=cache,target=/var/cache/git \
     uv pip install nixl "nvshmem4py-cu${CUDA_MAJOR}" cuda-python 'huggingface_hub[hf_xet]' && \
     uv pip install /tmp/wheels/*.whl && \
     git clone "${VLLM_REPO}" /opt/vllm-source && \
+    git -C /opt/vllm-source config --system --add safe.directory /opt/vllm-source && \
     git -C /opt/vllm-source fetch --depth=1 origin "${VLLM_COMMIT_SHA}" || true && \
-    git -C /opt/vllm-source checkout "${VLLM_COMMIT_SHA}" && \
-    test -f /home/vllm/.gitconfig || (touch /home/vllm/.gitconfig && chown vllm:root /home/vllm/.gitconfig) && \
-    printf "[safe]\n\tdirectory = /opt/vllm-source" >> /home/vllm/.gitconfig && \
-    test -f /root/.gitconfig || (touch /root/.gitconfig && chown root:root /root/.gitconfig) && \
-    printf "[safe]\n\tdirectory = /opt/vllm-source" >> /root/.gitconfig && \
+    git -C /opt/vllm-source checkout -q "${VLLM_COMMIT_SHA}" && \
     export WHEEL_URL=$(pip install \
         --no-cache-dir \
         --no-index \
@@ -418,16 +418,20 @@ RUN --mount=type=cache,target=/var/cache/git \
             exit 1; \
         fi; \
         uv pip install "${WHEEL_URL}"; \
+        rm /opt/warn-vllm-precompiled.sh; \
     else \
         if [ "${VLLM_USE_PRECOMPILED}" = "1" ] && [ -n "${WHEEL_URL}" ]; then \
-            echo "Using precompiled binaries and shared libraries for ${VLLM_COMMIT_SHA}."; \
+            echo "Using precompiled binaries and shared libraries for commit: ${VLLM_COMMIT_SHA}."; \
             export VLLM_USE_PRECOMPILED=1; \
             export VLLM_PRECOMPILED_WHEEL_LOCATION="${WHEEL_URL}"; \
             uv pip install -e /opt/vllm-source; \
+            /opt/warn-vllm-precompiled.sh; \
+            rm /opt/warn-vllm-precompiled.sh; \
         else \
             echo "Compiling fully from source. Either precompile disabled or wheel not found in index from main."; \
             unset VLLM_USE_PRECOMPILED VLLM_PRECOMPILED_WHEEL_LOCATION || true; \
             uv pip install -e /opt/vllm-source; \
+            rm /opt/warn-vllm-precompiled.sh; \
         fi; \
     fi; \
     uv pip install "nvidia-nccl-cu12>=2.26.2.post1" && \
