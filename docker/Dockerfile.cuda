@@ -454,7 +454,8 @@ ENV PATH="${VIRTUAL_ENV}/bin:/usr/local/nvidia/bin:${PATH}" \
     VLLM_CACHE_ROOT=/tmp/vllm \
     # NOTE: workaround for hang with XET. This should be removed 
     # in a future release when we get to the bottom of the issue.
-    HF_HUB_DISABLE_XET=1
+    HF_HUB_DISABLE_XET=1 \
+    UCX_MEM_MMAP_HOOK_MODE=none
 
 USER 2000
 WORKDIR /home/vllm
