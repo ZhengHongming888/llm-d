@@ -72,12 +72,6 @@ spec:
                 --gpu-memory-utilization 0.75
 
           env:
-          - name: VLLM_CACHE_ROOT
-            value: "/vllm-cache"
-          - name: FLASHINFER_BASE_DIR
-            value: "/vllm-cache/flashinfer"
-          - name: VLLM_NIXL_ABORT_REQUEST_TIMEOUT
-            value: "10000"
           - name: DP_SIZE_LOCAL
             value: "8"
           - name: TRITON_LIBCUDA_PATH
