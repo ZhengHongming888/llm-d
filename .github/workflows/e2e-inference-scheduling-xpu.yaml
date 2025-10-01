@@ -1,0 +1,19 @@
+name: XPU Inference Scheduling Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  deploy_and_validate:
+    runs-on: xpu-dispatch-runner
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: fake job
+        run: |
+          echo "testing"
