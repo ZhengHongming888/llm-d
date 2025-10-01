@@ -88,8 +88,15 @@ spec:
                                 "log_balancedness":"False"}' \
                 --compilation_config '{"cudagraph_mode": "FULL_DECODE_ONLY"}'
           env:
+          # VLLM_MOE_DP_CHUNK_SIZE is a tunable parameter.
+          # Higher values increase the memory footprint of the hidden states in the MoE layers,
+          # which decreases the available memory for KV Cache.
+          # Lower values may cause poor performance, especially in load-imbalanced scenarios.
+          # The value of 512 was chosen to be greater than the concurrency we expect to see on any DP rank while benchmarking.
+          # Has no effect when VLLM_ALL2ALL_BACKEND=deepep_high_throughput.
+            value: deepep_low_latency
           - name: VLLM_MOE_DP_CHUNK_SIZE
-            value: "512"
+            value: "512" # vLLM default is 256
           - name: DP_SIZE_LOCAL
             value: "8"
           - name: TRITON_LIBCUDA_PATH
