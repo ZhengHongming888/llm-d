@@ -125,4 +125,3 @@ spec:
           volumeMounts:
             - name: dshm
               mountPath: /dev/shm
-          workingDir: /code
