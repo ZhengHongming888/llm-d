@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base
-  - ./pod-monitors.yaml
+  - podmonitors.yaml
 patches:
   - target:
       kind: LeaderWorkerSet
@@ -13,16 +13,26 @@ patches:
         value: 
           name: hf-cache
           hostPath:
-                path: /mnt/local/hf-cache
-                type: DirectoryOrCreate
+            path: /mnt/local/hf-cache
+            type: DirectoryOrCreate
+      # Since we are loading model in from a host storage, lets patch in the volumeMount
       - op: add
-        path: /spec/leaderWorkerTemplate/workerTemplate/spec/volumes/-
+        path: /spec/leaderWorkerTemplate/workerTemplate/spec/containers/0/volumeMounts/-
         value:
-          name: vllm-cache
-          hostPath:
-                path: /mnt/local/vllm-cache
-                type: DirectoryOrCreate
-
+          name: hf-cache
+          mountPath: /huggingface-cache
+      # Since we are loading model in from a host storage, specify HF_HUB_CACHE
+      - op: add
+        path: /spec/leaderWorkerTemplate/workerTemplate/spec/containers/0/env/-
+        value:
+          name: HF_HUB_CACHE
+          value: /huggingface-cache
+      # Since we are loading model in from a host storage, disable HF_XET
+      - op: add
+        path: /spec/leaderWorkerTemplate/workerTemplate/spec/containers/0/env/-
+        value:
+          name: HF_HUB_DISABLE_XET
+          value: "1"
       # Add RMDA config.
       - op: add
         path: /spec/leaderWorkerTemplate/workerTemplate/spec/containers/0/resources/limits/rdma~1ib
@@ -42,3 +52,6 @@ patches:
                     operator: In
                     values:
                       - H200
+      - op: add
+        path: /spec/leaderWorkerTemplate/workerTemplate/spec/schedulerName
+        value: custom-binpack-scheduler

@@ -1,4 +1,4 @@
-apiVersion: leaderworkerset.x-k8s.io/v1
+  apiVersion: leaderworkerset.x-k8s.io/v1
 kind: LeaderWorkerSet
 metadata:
   name: wide-ep-llm-d-decode
@@ -17,6 +17,7 @@ spec:
           llm-d.ai/model: DeepSeek-R1-0528
           llm-d.ai/role: decode
       spec:
+        serviceAccountName: deepseek-r1
         initContainers:
           - name: routing-proxy
             args:
@@ -25,7 +26,7 @@ spec:
               - --connector=nixlv2
               - -v=1
               - --secure-proxy=false
-            image: ghcr.io/llm-d/llm-d-routing-sidecar:v0.2.0
+            image: ghcr.io/llm-d/llm-d-routing-sidecar:v0.3.0
             imagePullPolicy: Always
             ports:
               - containerPort: 8000
@@ -39,10 +40,9 @@ spec:
             emptyDir:
               medium: Memory
               sizeLimit: 2Gi # 2Gi for NCCL 2.27 to be safe
-          
         containers:
         - name: vllm-worker
-          image: quay.io/tms/llm-d-dev:0.3.0-203cb833c53a87003e42be451653cd9b0b86a098
+          image: ghcr.io/llm-d/llm-d-cuda-dev:pr-230@sha256:744738e06eabc2dbf53b299d01572f149a25c752d31e7dd8bb828776c509076c
           securityContext:
             capabilities:
               add:
@@ -51,7 +51,6 @@ spec:
             runAsGroup: 0
             runAsUser: 0
           imagePullPolicy: Always
-          
           command:
             - /bin/bash
             - -c
@@ -62,7 +61,6 @@ spec:
               #################
               set -euo pipefail
               START_RANK=$(( ${LWS_WORKER_INDEX:-0} * DP_SIZE_LOCAL ))
-              DP_SIZE=$(( ${LWS_GROUP_SIZE:-1} * DP_SIZE_LOCAL ))
             
               source /opt/vllm/bin/activate
               exec vllm serve \
@@ -73,7 +71,7 @@ spec:
                 --data-parallel-hybrid-lb \
                 --enable-expert-parallel \
                 --tensor-parallel-size $TP_SIZE \
-                --data-parallel-size $DP_SIZE \
+                --data-parallel-size $((LWS_GROUP_SIZE * DP_SIZE_LOCAL)) \
                 --data-parallel-size-local $DP_SIZE_LOCAL \
                 --data-parallel-address ${LWS_LEADER_ADDRESS} \
                 --data-parallel-rpc-port 5555 \
@@ -90,31 +88,12 @@ spec:
                                 "log_balancedness":"False"}' \
                 --compilation_config '{"cudagraph_mode": "FULL_DECODE_ONLY"}'
           env:
-          - name: VLLM_CACHE_ROOT
-            value: "/vllm-cache"
-          - name: FLASHINFER_BASE_DIR
-            value: "/vllm-cache/flashinfer"
-          - name: VLLM_LOGGING_LEVEL
-            value: INFO
           - name: VLLM_MOE_DP_CHUNK_SIZE
             value: "512"
-          #- name: VLLM_SERVER_DEV_MODE
-          #  value: "1"
-          #- name: VLLM_TORCH_PROFILER_DIR
-          #  value: "/traces"
-
-            # vLLM warms up DeepGEMM kernels to avoid high-variance slowdowns due to jitting.
-            # Especially important for the prefill instances, affecting TTFT.
-            # Safe to set once the DeepGEMM cache is on every node.
-          #- name: VLLM_SKIP_DEEP_GEMM_WARMUP
-          #  value: "1"
-
           - name: DP_SIZE_LOCAL
             value: "8"
           - name: TRITON_LIBCUDA_PATH
             value: /usr/lib64
-          - name: HF_HUB_DISABLE_XET
-            value: "1"
           - name: VLLM_SKIP_P2P_CHECK
             value: "1"
           - name: VLLM_RANDOMIZE_DP_DUMMY_INPUTS
@@ -123,11 +102,8 @@ spec:
             value: "1"
           - name: VLLM_ALL2ALL_BACKEND
             value: deepep_low_latency
-            # Currently disabled as we don't mount /dev/gdrdrv into the container
           - name: NVIDIA_GDRCOPY
             value: enabled
-          #- name: NVSHMEM_DEBUG
-          #  value: INFO
           - name: NVSHMEM_REMOTE_TRANSPORT
             value: ibgda
           - name: NVSHMEM_IB_ENABLE_IBGDA
@@ -140,14 +116,12 @@ spec:
             value: eth0
           - name: NCCL_IB_HCA
             value: ibp
-          - name: HF_HUB_CACHE
-            value: /huggingface-cache
+          - name: VLLM_LOGGING_LEVEL
+            value: INFO
           - name: VLLM_NIXL_SIDE_CHANNEL_HOST
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
-          - name: TP_SIZE
-            value: "1"
           ports:
           - containerPort: 8200
             name: metrics
@@ -156,7 +130,6 @@ spec:
             httpGet:
               path: /health
               port: 8200
-          
           resources:
             limits:
               ephemeral-storage: 64Gi
@@ -167,13 +140,7 @@ spec:
               ephemeral-storage: 64Gi
               memory: 512Gi
               nvidia.com/gpu: "8"
-          
           volumeMounts:
             - name: dshm
               mountPath: /dev/shm
-            - name: hf-cache
-              mountPath: /huggingface-cache
-            - name: vllm-cache
-              mountPath: /vllm-cache
-
           workingDir: /code

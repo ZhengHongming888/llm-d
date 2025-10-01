@@ -16,6 +16,7 @@ This example out of the box requires 2 Nvidia GPUs of any kind (support determin
 - Ensure your cluster infrastructure is sufficient to [deploy high scale inference](../prereq/infrastructure)
 - Configure and deploy your [Gateway control plane](../prereq/gateway-provider/README.md).
 - [Create the `llm-d-hf-token` secret in your target namespace with the key `HF_TOKEN` matching a valid HuggingFace token](../prereq/client-setup/README.md#huggingface-token) to pull models.
+- Have the [Monitoring stack](../../docs/monitoring/README.md) installed on your system.
 
 ## Installation
 
@@ -59,19 +60,19 @@ Follow provider specific instructions for installing HTTPRoute.
 #### Install for "kgateway" or "istio"
 
 ```bash
-kubectl apply -f httproute.yaml
+kubectl apply -f httproute.yaml -n ${NAMESPACE}
 ```
 
 #### Install for "gke"
 
 ```bash
-kubectl apply -f httproute.gke.yaml
+kubectl apply -f httproute.gke.yaml -n ${NAMESPACE}
 ```
 
 #### Install for "digitalocean"
 
 ```bash
-kubectl apply -f httproute.yaml
+kubectl apply -f httproute.yaml -n ${NAMESPACE}
 ```
 ## Verify the Installation
 
@@ -80,9 +81,9 @@ kubectl apply -f httproute.yaml
 ```bash
 helm list -n ${NAMESPACE}
 NAME                        NAMESPACE                 REVISION  UPDATED                               STATUS    CHART                     APP VERSION
-gaie-inference-scheduling   llm-d-inference-scheduler 1         2025-08-24 11:24:53.231918 -0700 PDT  deployed  inferencepool-v0.5.1      v0.5.1
-infra-inference-scheduling  llm-d-inference-scheduler 1         2025-08-24 11:24:49.551591 -0700 PDT  deployed  llm-d-infra-v1.3.0        v0.3.0
-ms-inference-scheduling     llm-d-inference-scheduler 1         2025-08-24 11:24:58.360173 -0700 PDT  deployed  llm-d-modelservice-v0.2.7 v0.2.0
+gaie-inference-scheduling   llm-d-inference-scheduler 1         2025-08-24 11:24:53.231918 -0700 PDT  deployed  inferencepool-v1.0.1      v1.0.1
+infra-inference-scheduling  llm-d-inference-scheduler 1         2025-08-24 11:24:49.551591 -0700 PDT  deployed  llm-d-infra-v1.3.3        v0.3.0
+ms-inference-scheduling     llm-d-inference-scheduler 1         2025-08-24 11:24:58.360173 -0700 PDT  deployed  llm-d-modelservice-v0.2.9 v0.2.0
 ```
 
 - Out of the box with this example you should have the following resources:
@@ -123,7 +124,7 @@ To remove the deployment:
 
 ```bash
 # From examples/inference-scheduling
-helmfile destroy -n ${NAMESPACE}
+helmfile destroy -n ${NAMESPACE} -e <your_environment>
 
 # Or uninstall manually
 helm uninstall infra-inference-scheduling -n ${NAMESPACE}
@@ -133,7 +134,7 @@ helm uninstall ms-inference-scheduling -n ${NAMESPACE}
 
 **_NOTE:_** If you set the `$RELEASE_NAME_POSTFIX` environment variable, your release names will be different from the command above: `infra-$RELEASE_NAME_POSTFIX`, `gaie-$RELEASE_NAME_POSTFIX` and `ms-$RELEASE_NAME_POSTFIX`.
 
-**_NOTE:_** You do not need to specify your `environment` with the `-e <environment>` flag to `helmfile` for removing a installation of the guide, even if you use a non-default option. You do, however, have to set the `-n ${NAMESPACE}` otherwise it may not cleanup the releases in the proper namespace.
+**_NOTE:_** You need to specify your `environment` with the `-e <environment>` flag to `helmfile` for removing a installation of the guide when using a non-default option. IE if you deploy with `-e istio` and undeploy `-e istioBench` or vice versa, it may fail. If you encounter this it is recommended to manually uninstall all 3 releases with `helm` as shown above.
 
 ### Cleanup HTTPRoute
 
@@ -142,19 +143,19 @@ Follow provider specific instructions for deleting HTTPRoute.
 #### Cleanup for "kgateway" or "istio"
 
 ```bash
-kubectl delete -f httproute.yaml
+kubectl delete -f httproute.yaml -n ${NAMESPACE}
 ```
 
 #### Cleanup for "gke"
 
 ```bash
-kubectl delete -f httproute.gke.yaml
+kubectl delete -f httproute.gke.yaml -n ${NAMESPACE}
 ```
 
 #### Cleanup for "digitalocean"
 
 ```bash
-kubectl delete -f httproute.yaml
+kubectl delete -f httproute.yaml -n ${NAMESPACE}
 ```
 
 ## Customization
