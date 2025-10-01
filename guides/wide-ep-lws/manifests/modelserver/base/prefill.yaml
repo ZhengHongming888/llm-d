@@ -7,7 +7,7 @@ metadata:
     llm-d.ai/model: DeepSeek-R1-0528
     llm-d.ai/role: prefill
 spec:
-  replicas: 3
+  replicas: 1
   leaderWorkerTemplate:
     size: 2
     workerTemplate:
