@@ -59,7 +59,6 @@ spec:
               #################
               # RUN vLLM decode worker
               #################
-              set -euo pipefail
               START_RANK=$(( ${LWS_WORKER_INDEX:-0} * DP_SIZE_LOCAL ))
             
               source /opt/vllm/bin/activate
@@ -68,8 +67,8 @@ spec:
                 --port 8200 \
                 --trust-remote-code \
                 --disable-uvicorn-access-log \
-                # Allow exernal load balancing across nodes, \
-                # internal load balancing within a node \
+                # Use exernal load balancing across nodes, \
+                # and internal load balancing within a node \
                 --data-parallel-hybrid-lb \
                 # Use TPxDP in attention, EP in MoE layers \
                 --enable-expert-parallel \
@@ -79,7 +78,7 @@ spec:
                 --data-parallel-address ${LWS_LEADER_ADDRESS} \
                 --data-parallel-rpc-port 5555 \
                 --data-parallel-start-rank $START_RANK \
-                # Used for P/D disaggregation \
+                # configure P/D disaggregation \
                 --kv_transfer_config '{"kv_connector":"NixlConnector",
                                         "kv_role":"kv_both"}' \
                 # Reduce white space between engine steps \
