@@ -81,8 +81,6 @@ jobs:
           cd guides/inference-scheduling
           RELEASE_NAME_POSTFIX=${RELEASE_NAME_POSTFIX} \
           helmfile apply -e xpu -n "${NAMESPACE}" \
-            --set "gateway.service.type=LoadBalancer" \
-            --skip-schema-validation \
             | tee ~/inference-scheduling-deployment.log
           echo "---------------------------------------" >> ~/inference-scheduling-xpu-deployment.log
 
