@@ -97,11 +97,20 @@ RUN dnf -q update -y && dnf clean all
 RUN dnf -q install -y dnf-plugins-core && \
     dnf -q install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf config-manager --set-enabled epel && \
+    dnf config-manager --set-enabled ubi-9-codeready-builder-rpms && \
+    dnf config-manager --set-enabled powertools && \
     DOWNLOAD_ARCH=""; \
     if [ "$(uname -m)" = "amd64" ] || [ "$(uname -m)" = "x86_64" ]; then \
         DOWNLOAD_ARCH="x86_64"; \
     fi; \
     dnf config-manager --add-repo "https://developer.download.nvidia.com/compute/cuda/repos/rhel9/${DOWNLOAD_ARCH}/cuda-rhel9.repo" && \
+    rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox && \
+    dnf config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/24.10-0.7.0.0/rhel9.5/mellanox_mlnx_ofed.repo && \
+    dnf update && dnf makecache && \
+    echo "=== Available libnl packages across enabled repos ===" && \
+    dnf repoquery --available --qf '%{name}-%{version}-%{release}.%{arch} :: %{repoid}' 'libnl*' || true && \
+    echo "=== Installed libnl packages before install ===" && \
+    dnf list --installed 'libnl*' || true && \
     dnf -q install -y --allowerasing \
         python${PYTHON_VERSION} python${PYTHON_VERSION}-pip python${PYTHON_VERSION}-wheel \
         python${PYTHON_VERSION}-devel \
@@ -119,6 +128,8 @@ RUN dnf -q install -y dnf-plugins-core && \
         libuuid-devel \
         glibc-devel \
         rdma-core-devel \
+        libnl-3.0 \
+        libnl-route-3.0 \
         libibverbs \
         libibverbs-devel \
         numactl-libs \
