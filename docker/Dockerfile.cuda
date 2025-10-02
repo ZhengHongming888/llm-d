@@ -200,7 +200,7 @@ RUN --mount=type=secret,id=aws_access_key_id \
         .. && \
         ninja -j$(nproc) && \
         ninja install &&  \
-        cp ${NVSHMEM_DIR}/lib/python/dist/nvshmem4py_cu${CUDA_MAJOR}-*-cp${PYTHON_VERSION/./}-cp${PYTHON_VERSION/./}-*.whl /wheels/ && \
+        cp ${NVSHMEM_DIR}/lib/python/dist/nvshmem4py_cu${CUDA_MAJOR}-*-cp${PYTHON_VERSION/./}-cp${PYTHON_VERSION/./}-manylinux_*.whl /wheels/ && \
         cd /tmp && rm -rf nvshmem_src* && \
         if [ "${USE_SCCACHE}" = "true" ]; then \
             echo "=== NVSHMEM build complete - sccache stats ===" && \
