@@ -143,7 +143,7 @@ jobs:
       - name: Verify installation and run inference tests
         run: |
           cd .github/scripts/e2e
-          ./e2e-validate.sh -n "${NAMESPACE}"
+          ./e2e-validate.sh -n "${NAMESPACE}" -v
 
       - name: Collect and upload Kubernetes pod logs
         if: always()
