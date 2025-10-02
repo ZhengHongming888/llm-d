@@ -166,6 +166,9 @@ RUN --mount=type=cache,target=/var/cache/git \
 ENV CPPFLAGS="-I$NVSHMEM_DIR/include ${CPPFLAGS}" \
     LDFLAGS="-L$NVSHMEM_DIR/lib ${LDFLAGS}"
 
+# Create wheels directory
+RUN mkdir -p /wheels
+
 # Copy patches before build
 COPY patches/ /tmp/patches/
 
@@ -254,9 +257,6 @@ ARG DEEPEP_VERSION="v1.2.1"
 ARG DEEPGEMM_REPO="https://github.com/deepseek-ai/DeepGEMM"
 ARG DEEPGEMM_VERSION="v2.1.0"
 ARG PPLX_KERNELS_REPO="https://github.com/perplexityai/pplx-kernels"
-
-# Create wheels directory
-RUN mkdir -p /wheels
 
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
