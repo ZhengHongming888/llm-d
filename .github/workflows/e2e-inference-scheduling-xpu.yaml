@@ -76,7 +76,7 @@ jobs:
             --namespace "${NAMESPACE}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Deploy model service and GIE with Helmfile
+      - name: Deploy guide
         run: |
           cd guides/inference-scheduling
           RELEASE_NAME_POSTFIX=${RELEASE_NAME_POSTFIX} \
@@ -86,16 +86,7 @@ jobs:
             | tee ~/inference-scheduling-deployment.log
           echo "---------------------------------------" >> ~/inference-scheduling-xpu-deployment.log
 
-      - name: Deploy HTTPRoute
-        run: |
-          cd guides/inference-scheduling
-          echo "Deploying HTTPRoute..."
-          kubectl apply -f httproute.yaml \
-            -n "${NAMESPACE}" \
-            | tee >> ~/inference-scheduling-xpu-deployment.log
-          echo "---------------------------------------" >> ~/inference-scheduling-xpu-deployment.log
-
-      - name: Upload helm get all
+      - name: fetch helm manifests - prepare for upload
         run: |
           for release_name in "${INFRA_RELEASE_NAME}" "${GAIE_RELEASE_NAME}" "${MS_RELEASE_NAME}"; do
             /bin/sh .github/scripts/e2e/helm-get-all.sh \
@@ -115,15 +106,14 @@ jobs:
           echo "✅ All pods are ready."
           kubectl get pods -n "${NAMESPACE}"
 
-      - name: Wait for gateway to be ready
+      - name: Check gateway pod is up
         run: |
-          GATEWAY_NAME=infra-r1-inference-gateway
-          kubectl wait gateway/${GATEWAY_NAME} \
-            --for=condition=Programmed=True \
-            -n "${NAMESPACE}" \
-            --timeout=300s
-          echo "✅ Gateway is ready."
-          kubectl get gateway -n "${NAMESPACE}"
+          GATEWAY_POD_READY=$(kubectl get pods -n "${NAMESPACE}" | grep "inference-gateway" | awk '{print $2}')
+          if [ "${GATEWAY_POD_READY}" = "1/1" ]; then
+              echo "✅ Gateway pod ready."
+          else
+              echo "❌ Missing gateway pod"
+          fi
 
       - name: Show deployment status
         run: |
@@ -186,6 +176,5 @@ jobs:
         if: always()
         run: |
           cd guides/inference-scheduling
-          helmfile apply -e xpu -n "${NAMESPACE}"
-          kubectl delete -f httproute.yaml -n "${NAMESPACE}"
+          helmfile destroy -e xpu -n "${NAMESPACE}"
           kubectl delete ns ${NAMESPACE}

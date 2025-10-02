@@ -29,8 +29,9 @@ routing:
   inferencePool:
     create: false
 
+  # create httpRoute via MS for using release name r1 override
   httpRoute:
-    create: false
+    create: true
 
   epp:
     create: false
