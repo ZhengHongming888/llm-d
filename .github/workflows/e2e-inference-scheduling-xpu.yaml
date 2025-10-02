@@ -139,6 +139,9 @@ jobs:
           echo "=== Gateway ==="
           kubectl get Gateway -n "${NAMESPACE}" || true
           echo ""
+          echo "=== Destination Rule ==="
+          kubectl get destinationrule -n "${NAMESPACE}" || true
+          echo ""
 
       - name: Verify installation and run inference tests
         run: |
