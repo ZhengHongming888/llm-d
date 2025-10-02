@@ -106,24 +106,24 @@ jobs:
 
       - name: Wait for all pods to be ready
         run: |
-          # kubectl wait pod \
-          #   --for=condition=Ready \
-          #   --all \
-          #   -n "${NAMESPACE}" \
-          #   --timeout=3m
+          kubectl wait pod \
+            --for=condition=Ready \
+            --all \
+            -n "${NAMESPACE}" \
+            --timeout=10m
           sleep 180 # TODO: remove this once examples have readiness probes
           echo "✅ All pods are ready."
           kubectl get pods -n "${NAMESPACE}"
 
-      # - name: Wait for gateway to be ready
-      #   run: |
-      #     GATEWAY_NAME=infra-r1-inference-gateway
-      #     kubectl wait gateway/${GATEWAY_NAME} \
-      #       --for=condition=Programmed=True \
-      #       -n "${NAMESPACE}" \
-      #       --timeout=300s
-      #     echo "✅ Gateway is ready."
-      #     kubectl get gateway -n "${NAMESPACE}"
+      - name: Wait for gateway to be ready
+        run: |
+          GATEWAY_NAME=infra-r1-inference-gateway
+          kubectl wait gateway/${GATEWAY_NAME} \
+            --for=condition=Programmed=True \
+            -n "${NAMESPACE}" \
+            --timeout=300s
+          echo "✅ Gateway is ready."
+          kubectl get gateway -n "${NAMESPACE}"
 
       - name: Show deployment status
         run: |
@@ -152,10 +152,10 @@ jobs:
           kubectl get Gateway -n "${NAMESPACE}" || true
           echo ""
 
-      # - name: Verify installation and run inference tests
-      #   run: |
-      #     cd .github/scripts/e2e
-      #     ./e2e-validate.sh -n "${NAMESPACE}"
+      - name: Verify installation and run inference tests
+        run: |
+          cd .github/scripts/e2e
+          ./e2e-validate.sh -n "${NAMESPACE}"
 
       - name: Collect and upload Kubernetes pod logs
         if: always()
