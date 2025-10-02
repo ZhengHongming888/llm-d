@@ -130,7 +130,7 @@ You should see output similar to:
 
 ```json
 {"level":"Level(-4)","ts":"2025-09-25T22:10:21Z","caller":"framework/scheduler_profile.go:165","msg":"Calculated score","x-request-id":"47eb86fd-484a-4851-a9ab-5fa821571f7b","objectiveKey":"","incomingModelName":"Qwen/Qwen3-0.6B","targetModelName":"Qwen/Qwen3-0.6B","priority":0,"plugin":"precise-prefix-cache-scorer/precise-prefix-cache-scorer","endpoint":{"name":"ms-kv-events-llm-d-modelservice-decode-699f868b95-gn8g8","namespace":"llm-d-precise"},"score":0}
-{"level":"Level(-4)","ts":"2025-09-25T22:10:21Z","caller":"framework/scheduler_profile.go:165","msg":"Calculated score","x-request-id":"47eb86fd-484a-4851-a9ab-5fa821571f7b","objectiveKey":"","incomingModelName":"Qwen/Qwen3-0.6B","targetModelName":"Qwen/Qwen3-0.6B","priority":0,"plugin":"precise-prefix-cache-scorer/precise-prefix-cache-scorer","endpoint":{"name":"ms-kv-events-llm-d-modelservice-decode-699f868b95-mgn2g","namespace":"llm-d-precise"},"score":0}
+{"level":"Level(-4)","ts":"2025-09-25T22:10:21Z","caller":"framework/scheduler_profile.go:165","msg":"Calculated score","x-request-id":"47eb86fd-484a-4851-a9ab-5fa821571f7b","objectiveKey":"","incomingModelName":"Qwen/Qwen3-0.6B","targetModelName":"Qwen/Qwen3-0.6B","priority":0,"plugin":"precise-prefix-cache-scorer/precise-prefix-cache-scorer","endpoint":{"name":"ms-kv-events-llm-d-modelservice-decode-699f868b95-mgn2g","namespace":"llm-d-precise"},"score":1}
 ```
 
 **_NOTE:_** These logs will only appear for unique requests, so if you don't see repeated instances of these logs make sure to redo them in a unique way.
