@@ -60,12 +60,19 @@ jobs:
         with:
           buildkitd-flags: --oci-worker-gc
 
-      - name: Log in to Container Registry
+      - name: Log in to GHCR Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
+        
+      # - name: Log in to Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Extract metadata
         id: meta
@@ -100,6 +107,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: "1"
           BUILDKIT_PROGRESS: "plain"
+          DOCKER_AUTH_CONFIG: ${{ secrets.CR_AUTH_JSON }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
