@@ -112,7 +112,7 @@ jobs:
             --for=condition=Ready \
             --all \
             -n "${NAMESPACE}" \
-            --timeout=10m
+            --timeout=30m
           sleep 180 # TODO: remove this once examples have readiness probes
           echo "✅ All pods are ready."
           kubectl get pods -n "${NAMESPACE}"
