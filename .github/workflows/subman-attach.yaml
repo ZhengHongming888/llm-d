@@ -1,0 +1,53 @@
+name: Attach subman once - ephemeral
+
+on:
+  push:
+    branches: [ "gke-debug" ]
+    paths:
+      - ".github/workflows/subman-attach.yaml"
+
+jobs:
+  attach:
+    runs-on: vllm-runner
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Determine if pr_or_branch is a PR number
+        id: check_pr
+        env:
+          PR_OR_BRANCH: ${{ github.event.inputs.pr_or_branch }}
+        shell: bash
+        run: |
+          echo "PR_OR_BRANCH=${PR_OR_BRANCH:-main}" >> "$GITHUB_ENV"
+          if [[ "$PR_OR_BRANCH" =~ ^[0-9]+$ ]]; then
+            echo "is_pr=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" = "pull_request" ]]; then
+            echo "PR_OR_BRANCH=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+            echo "is_pr=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_pr=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fetch and checkout PR
+        if: steps.check_pr.outputs.is_pr == 'true'
+        run: |
+          git fetch origin pull/"$PR_OR_BRANCH"/head:pr-"$PR_OR_BRANCH"
+          git checkout pr-"$PR_OR_BRANCH"
+
+      - name: Checkout branch
+        if: steps.check_pr.outputs.is_pr == 'false'
+        shell: bash
+        run: |
+          git fetch --all --tags
+          git checkout "$PR_OR_BRANCH"
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3.18
+        timeout-minutes: 15
+        with:
+          detached: false
+          limit-access-to-actor: true
