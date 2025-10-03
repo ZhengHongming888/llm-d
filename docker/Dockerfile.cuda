@@ -167,7 +167,7 @@ ENV CPPFLAGS="-I$NVSHMEM_DIR/include ${CPPFLAGS}" \
     LDFLAGS="-L$NVSHMEM_DIR/lib ${LDFLAGS}"
 
 # Copy patches before build
-COPY patches/ /tmp/patches/
+# COPY patches/ /tmp/patches/
 
 # Build and install NVSHMEM from source with coreweave patch
 RUN --mount=type=secret,id=aws_access_key_id \
@@ -177,7 +177,6 @@ RUN --mount=type=secret,id=aws_access_key_id \
     wget https://developer.download.nvidia.com/compute/redist/nvshmem/${NVSHMEM_VERSION}/source/nvshmem_src_cuda12-all-all-${NVSHMEM_VERSION}.tar.gz -O nvshmem_src_cuda${CUDA_MAJOR}.tar.gz && \
     tar -xf nvshmem_src_cuda${CUDA_MAJOR}.tar.gz && \
     cd nvshmem_src && \
-    git apply /tmp/patches/cks_nvshmem${NVSHMEM_VERSION}.patch && \
     mkdir build && \
         cd build && \
         cmake \
