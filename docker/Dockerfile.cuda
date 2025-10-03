@@ -1,7 +1,11 @@
+ARG CUDA_MAJOR=12
+ARG CUDA_MINOR=9
+ARG CUDA_PATCH=1
+
 # ============================================================================
 # SUBSCRIPTION MANAGEMENT STAGE - Attach the proper subscriptions from subman
 # ============================================================================
-FROM registry.redhat.io/ubi9/ubi:latest as libnl3-devel-provider
+FROM registry.redhat.io/rhel9/python-311:latest AS libnl3-devel-provider
 
 RUN --mount=type=secret,id=subman_org \
     --mount=type=secret,id=subman_activation_key \
@@ -12,10 +16,6 @@ RUN --mount=type=secret,id=subman_org \
     dnf -y install libnl3-devel && dnf clean all; \
     subscription-manager unregister; \
     rm -rf /etc/pki/entitlement/* /etc/rhsm/* /var/cache/dnf/*
-
-ARG CUDA_MAJOR=12
-ARG CUDA_MINOR=9
-ARG CUDA_PATCH=1
 
 # ============================================================================
 # BUILD STAGE - Install build dependencies and create wheels
