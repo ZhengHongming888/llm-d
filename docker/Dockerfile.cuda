@@ -129,7 +129,7 @@ RUN dnf -q install -y dnf-plugins-core && \
         glibc-devel \
         rdma-core-devel \
         libnl3 \
-        libnl3-devel \
+        # libnl3-devel \
         libibverbs \
         libibverbs-devel \
         numactl-libs \
