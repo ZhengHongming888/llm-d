@@ -69,7 +69,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
   uv pip install \
     # global
     numpy \ 
-    nixl \
     pyyaml \
     types-PyYAML \
     pytest \ 
