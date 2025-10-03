@@ -112,7 +112,7 @@ jobs:
             --for=condition=Ready \
             --all \
             -n "${NAMESPACE}" \
-            --timeout=30m
+            --timeout=10m
           sleep 180 # TODO: remove this once examples have readiness probes
           echo "✅ All pods are ready."
           kubectl get pods -n "${NAMESPACE}"
@@ -167,15 +167,14 @@ jobs:
             mkdir -p pod-logs-pd-xpu
             cd pod-logs-pd-xpu
             echo "Fetching ${NAMESPACE} pods log..."
-            kubectl get pods -n "${NAMESPACE}" -l "llm-d.ai/role=decode" -o yaml > ./decode-pods.yaml
-            kubectl logs -n "${NAMESPACE}" -l "llm-d.ai/role=decode" > ./decode-pod-logs.log
-            kubectl describe pod -n "${NAMESPACE}" -l "llm-d.ai/role=decode" > ./decode-describe-pod-logs.log
-
+            kubectl get pods -n "${NAMESPACE}" -l "llm-d.ai/inferenceServing" -o yaml > ./inference-pods.yaml
+            kubectl logs -n "${NAMESPACE}" -l "llm-d.ai/inferenceServing" > ./inference-pod-logs.log
+            kubectl describe pod -n "${NAMESPACE}" -l "llm-d.ai/inferenceServing" > ./inference-describe-pod-logs.log
             kubectl get pods -n "${NAMESPACE}" --no-headers -o custom-columns=":metadata.name" \
-            | xargs -I{} sh -c 'kubectl logs --all-containers=true -n "${NAMESPACE}" {} > "{}.log" 2>&1'
+            | xargs -I{} sh -c 'kubectl logs --all-containers=true -n "${NAMESPACE}" {} > "{}.log" 2>&1' || true
             echo "Fetching ${NAMESPACE} pods descriptions..."
             kubectl get pods -n "${NAMESPACE}" --no-headers -o custom-columns=":metadata.name" \
-            | xargs -I{} sh -c 'kubectl describe pod -n "${NAMESPACE}" {} > "{}-describe.log" 2>&1'
+            | xargs -I{} sh -c 'kubectl describe pod -n "${NAMESPACE}" {} > "{}-describe.log" 2>&1' || true
             mv ~/pd-xpu-deployment.log . || true
             mv ~/install-deps.log . || true
 
