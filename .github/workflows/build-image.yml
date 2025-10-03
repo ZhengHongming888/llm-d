@@ -107,7 +107,6 @@ jobs:
         env:
           DOCKER_BUILDKIT: "1"
           BUILDKIT_PROGRESS: "plain"
-          DOCKER_AUTH_CONFIG: ${{ secrets.CR_AUTH_JSON }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
