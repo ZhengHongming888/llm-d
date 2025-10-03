@@ -108,7 +108,7 @@ prefill:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: "ghcr.io/llm-d/llm-d-xpu-dev:v0.2.1"
+    image: "ghcr.io/llm-d/llm-d-xpu-dev:310@sha256:6bbb6988ed5cd285973910f8aa54aeef995ec14c4a524b63b6f2fb4014ae54b2"
     modelCommand: vllmServe
     args:
       - "--block-size"
@@ -124,10 +124,6 @@ prefill:
       supplementalGroups:
         - 107
     env:
-      - name: VLLM_NIXL_SIDE_CHANNEL_HOST
-        valueFrom:
-          fieldRef:
-            fieldPath: status.podIP
       - name: UCX_TLS
         value: "tcp"
       # - name: VLLM_WORKER_MULTIPROC_METHOD
