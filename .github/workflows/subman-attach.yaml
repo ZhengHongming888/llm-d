@@ -2,9 +2,6 @@ name: Attach subman once - ephemeral
 
 on:
   push:
-    branches: [ "gke-debug" ]
-    paths:
-      - ".github/workflows/subman-attach.yaml"
 
 jobs:
   attach:
