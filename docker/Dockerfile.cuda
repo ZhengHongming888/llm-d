@@ -5,7 +5,8 @@ ARG CUDA_PATCH=1
 # ============================================================================
 # SUBSCRIPTION MANAGEMENT STAGE - Attach the proper subscriptions from subman
 # ============================================================================
-FROM registry.redhat.io/rhel9/python-311:latest AS libnl3-devel-provider
+# FROM registry.redhat.io/rhel9/python-311:latest AS libnl3-devel-provider
+FROM registry.redhat.io/ubi9/ubi:latest AS libnl3-devel-provider
 
 RUN --mount=type=secret,id=subman_org \
     --mount=type=secret,id=subman_activation_key \
