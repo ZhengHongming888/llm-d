@@ -103,6 +103,10 @@ RUN dnf -q install -y dnf-plugins-core && \
     if [ "$(uname -m)" = "amd64" ] || [ "$(uname -m)" = "x86_64" ]; then \
         DOWNLOAD_ARCH="x86_64"; \
     fi; \
+    rpm -ivh --nodeps  \
+    https://rpmfind.net/linux/centos-stream/9-stream/BaseOS/x86_64/os/Packages/libnl3-3.11.0-1.el9.x86_64.rpm \
+    https://rpmfind.net/linux/centos-stream/9-stream/BaseOS/x86_64/os/Packages/libnl3-cli-3.11.0-1.el9.x86_64.rpm \
+    https://rpmfind.net/linux/centos-stream/9-stream/AppStream/x86_64/os/Packages/libnl3-devel-3.11.0-1.el9.x86_64.rpm && \
     dnf config-manager --add-repo "https://developer.download.nvidia.com/compute/cuda/repos/rhel9/${DOWNLOAD_ARCH}/cuda-rhel9.repo" && \
     rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox && \
     dnf config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/24.10-0.7.0.0/rhel9.5/mellanox_mlnx_ofed.repo && \
