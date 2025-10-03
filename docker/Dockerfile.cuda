@@ -97,7 +97,7 @@ RUN dnf -q update -y && dnf clean all
 RUN dnf -q install -y dnf-plugins-core && \
     dnf -q install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf config-manager --set-enabled epel && \
-    dnf config-manager --set-enabled ubi-9-codeready-builder-rpms && \
+    dnf config-manager --set-enabled rhel-9-for-x86_64-baseos-rpms && \
     dnf config-manager --set-enabled powertools && \
     DOWNLOAD_ARCH=""; \
     if [ "$(uname -m)" = "amd64" ] || [ "$(uname -m)" = "x86_64" ]; then \
@@ -128,8 +128,8 @@ RUN dnf -q install -y dnf-plugins-core && \
         libuuid-devel \
         glibc-devel \
         rdma-core-devel \
-        libnl-3.0 \
-        libnl-route-3.0 \
+        libnl3 \
+        libnl3-devel \
         libibverbs \
         libibverbs-devel \
         numactl-libs \
