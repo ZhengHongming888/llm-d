@@ -14,9 +14,10 @@ on:
   # # temporary - for testing
   pull_request:
     branches: [ main ]
-  push:
-    branches: [ main ]
-
+    paths:
+      - "guides/pd-disaggregation/ms-pd/values_xpu.yaml"
+      - "guides/pd-disaggregation/helmfile.yaml.gotmpl"
+      - ".github/workflows/e2e-pd-xpu.yaml"
 jobs:
   deploy_and_validate:
     # if: >

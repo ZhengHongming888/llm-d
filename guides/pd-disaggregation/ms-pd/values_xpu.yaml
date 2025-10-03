@@ -46,7 +46,7 @@ decode:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: "ghcr.io/llm-d/llm-d-xpu-dev:pr-190"
+    image: "ghcr.io/llm-d/llm-d-xpu-dev:4fb3f5f@sha256:951554485a1e7db7850b51a7687532f2313f19c352e5d88c14f445795c19c487"
     modelCommand: vllmServe
     args:
       - "--block-size"
