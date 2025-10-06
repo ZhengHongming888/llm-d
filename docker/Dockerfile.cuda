@@ -258,7 +258,7 @@ ARG DEEPGEMM_REPO="https://github.com/deepseek-ai/DeepGEMM"
 ARG DEEPGEMM_VERSION="v2.1.0"
 ARG PPLX_KERNELS_REPO="https://github.com/perplexityai/pplx-kernels"
 
-# ARG FLASHINFER_VERSION="v0.3.1"
+ARG FLASHINFER_VERSION="v0.3.1"
 
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -277,7 +277,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip uninstall flashinfer-python || true && \
     git clone https://github.com/flashinfer-ai/flashinfer.git && \
     cd flashinfer && \
-    uv pip install -e . --no-build-isolation && \
+    git checkout -q "${FLASHINFER_VERSION}" \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf flashinfer && \
     \
