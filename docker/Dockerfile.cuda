@@ -257,6 +257,7 @@ ARG DEEPEP_VERSION="v1.2.1"
 ARG DEEPGEMM_REPO="https://github.com/deepseek-ai/DeepGEMM"
 ARG DEEPGEMM_VERSION="v2.1.0"
 ARG PPLX_KERNELS_REPO="https://github.com/perplexityai/pplx-kernels"
+ARG FLASHINFER_VERSION="v0.3.1"
 
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -275,6 +276,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip uninstall flashinfer-python || true && \
     git clone https://github.com/flashinfer-ai/flashinfer.git && \
     cd flashinfer && \
+    git checkout -q ${FLASHINFER_VERSION} \
     uv pip install -e . --no-build-isolation && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf flashinfer && \
@@ -311,7 +313,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-devel-ubi9 AS runtime
 
 ARG CUDA_MAJOR=12
-ARG CUDA_MINOR=8
+ARG CUDA_MINOR=9
 ARG CUDA_PATCH=1
 ARG PYTHON_VERSION
 ARG NVSHMEM_VERSION=3.3.20
