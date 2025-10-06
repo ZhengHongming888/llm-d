@@ -276,7 +276,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip uninstall flashinfer-python || true && \
     git clone https://github.com/flashinfer-ai/flashinfer.git && \
     cd flashinfer && \
-    git checkout -q ${FLASHINFER_VERSION} \
+    git checkout -q "${FLASHINFER_VERSION}" \
     uv pip install -e . --no-build-isolation && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf flashinfer && \
