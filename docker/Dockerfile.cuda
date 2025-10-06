@@ -3,22 +3,6 @@ ARG CUDA_MINOR=9
 ARG CUDA_PATCH=1
 
 # ============================================================================
-# SUBSCRIPTION MANAGEMENT STAGE - Attach the proper subscriptions from subman
-# ============================================================================
-# FROM registry.redhat.io/rhel9/python-311:latest AS libnl3-devel-provider
-FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-devel-ubi9 AS libnl3-devel-provider
-
-RUN --mount=type=secret,id=subman_org \
-    --mount=type=secret,id=subman_activation_key \
-    set -euo pipefail; \
-    subscription-manager register \
-      --org "$(cat /run/secrets/subman_org)" \
-      --activationkey "$(cat /run/secrets/subman_activation_key)" --force; \
-    dnf -y install libnl3-devel && dnf clean all; \
-    subscription-manager unregister; \
-    rm -rf /etc/pki/entitlement/* /etc/rhsm/* /var/cache/dnf/*
-
-# ============================================================================
 # BUILD STAGE - Install build dependencies and create wheels
 # ============================================================================
 FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-devel-ubi9 AS builder
@@ -109,14 +93,13 @@ ENV LANG=C.UTF-8 \
 # Update base packages
 RUN dnf -q update -y && dnf clean all
 
-# Copy in libnl3 pieces
-COPY --from=libnl3-devel-provider /usr/include/libnl3 /usr/include
-COPY --from=libnl3-devel-provider /usr/lib64/libnl* /usr/lib64
-COPY --from=libnl3-devel-provider /usr/lib64/pkgconfig/libnl* /usr/lib64/pkgconfig/
-COPY --from=libnl3-devel-provider /usr/share/licenses/libnl3-devel /usr/share/licenses
-
 # Install base packages and EPEL in single layer
-RUN dnf -q install -y dnf-plugins-core && \
+RUN --mount=type=secret,id=subman_org \
+    --mount=type=secret,id=subman_activation_key \
+    subscription-manager register \
+      --org "$(cat /run/secrets/subman_org)" \
+      --activationkey "$(cat /run/secrets/subman_activation_key)" --force; \
+    dnf -q install -y dnf-plugins-core && \
     dnf -q install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf config-manager --set-enabled epel && \
     dnf config-manager --set-enabled rhel-9-for-x86_64-baseos-rpms && \
@@ -149,6 +132,7 @@ RUN dnf -q install -y dnf-plugins-core && \
         pkg-config \
         libuuid-devel \
         glibc-devel \
+        libnl3-devel \
         rdma-core-devel \
         libibverbs \
         libibverbs-devel \
@@ -159,7 +143,9 @@ RUN dnf -q install -y dnf-plugins-core && \
         ninja-build \
         xz \
         rsync \
-    && dnf clean all
+    && dnf clean all; \
+    subscription-manager unregister; \
+    rm -rf /etc/pki/entitlement/* /etc/rhsm/* /var/cache/dnf/*
 
 # Setup Python virtual environment
 RUN python${PYTHON_VERSION} -m venv /opt/vllm && \
