@@ -19,7 +19,7 @@ decode:
   replicas: 2
   containers:
   - name: "vllm"
-    image: "ghcr.io/llm-d/llm-d-cuda-dev:pr-230@sha256:744738e06eabc2dbf53b299d01572f149a25c752d31e7dd8bb828776c509076c"
+    image: "ghcr.io/llm-d/llm-d-cuda-dev:pr-305@sha256:a5557be64a428817a66503bdbbc31709806aa41f45d2d64f0c4ada1bdd284814"
     modelCommand: vllmServe  # Required by chart
     args:
       - "--enforce-eager"
