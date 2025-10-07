@@ -247,7 +247,7 @@ ARG VLLM_PREBUILT=0
 # Dictates if we should pull precompiled binaries when installing vllm editably. These commits must be on main in vLLM.
 ARG VLLM_USE_PRECOMPILED=1
 
-COPY docker/scripts/warn-vllm-precompiled.sh /opt/
+COPY scripts/warn-vllm-precompiled.sh /opt/
 
 # Install cuda-python, nvshmem python bindings, xet
 # Install all compiled wheels (DeepEP, DeepGEMM, pplx-kernels, LMCache, nixl)
