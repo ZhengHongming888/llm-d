@@ -115,10 +115,30 @@ spec:
           - containerPort: 8000
             name: metrics
             protocol: TCP
-          readinessProbe:
+          startupProbe:
+            exec:
+              command:
+                - /usr/local/bin/readiness_probe.sh
+                - "8000"
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 80
+          livenessProbe:
             httpGet:
               path: /health
               port: 8000
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /usr/local/bin/readiness_probe.sh
+                - "8000"
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           resources:
             limits:
               ephemeral-storage: 64Gi

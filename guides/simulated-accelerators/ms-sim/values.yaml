@@ -45,9 +45,10 @@ decode:
     - name: metrics-volume
       mountPath: /.config
     startupProbe:
-      httpGet:
-        path: /health
-        port: 8200
+      exec:
+        command:
+          - /usr/local/bin/readiness_probe.sh
+          - "8200"
       initialDelaySeconds: 15
       periodSeconds: 30
       timeoutSeconds: 5
@@ -60,9 +61,10 @@ decode:
       timeoutSeconds: 5
       failureThreshold: 3
     readinessProbe:
-      httpGet:
-        path: /health
-        port: 8200
+      exec:
+        command:
+          - /usr/local/bin/readiness_probe.sh
+          - "8200"
       periodSeconds: 5
       timeoutSeconds: 2
       failureThreshold: 3
@@ -94,9 +96,10 @@ prefill:
     - name: metrics-volume
       mountPath: /.config
     startupProbe:
-      httpGet:
-        path: /health
-        port: 8000
+      exec:
+        command:
+          - /usr/local/bin/readiness_probe.sh
+          - "8000"
       initialDelaySeconds: 15
       periodSeconds: 30
       timeoutSeconds: 5
@@ -109,9 +112,10 @@ prefill:
       timeoutSeconds: 5
       failureThreshold: 3
     readinessProbe:
-      httpGet:
-        path: /health
-        port: 8000
+      exec:
+        command:
+          - /usr/local/bin/readiness_probe.sh
+          - "8000"
       periodSeconds: 5
       timeoutSeconds: 2
   volumes:
