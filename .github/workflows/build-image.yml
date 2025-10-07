@@ -2,13 +2,13 @@ name: Dev LLM-D Image Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - .github/workflows/build-image.yml
       - docker/**
       - patches/**
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
       - .github/workflows/build-image.yml
       - docker/**
@@ -24,6 +24,17 @@ env:
   IMAGE_NAME: llm-d
 
 jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './docker/scripts'
+          severity: warning
+          additional_files: ''
+
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
@@ -39,17 +50,20 @@ jobs:
           filters: |
             cuda:
               - 'docker/Dockerfile.cuda'
+              - 'docker/scripts/**'
               - 'patches/cks_nvshmem3.3.20.patch'
               - 'patches/cks_nvshmem3.3.9.patch'
             xpu:
               - 'docker/Dockerfile.xpu'
+              - 'docker/scripts/**'
             aws:
               - 'docker/Dockerfile.aws'
+              - 'docker/scripts/**'
             gke:
               - 'docker/Dockerfile.gke'
 
   cuda-build-llm-d:
-    needs: detect-changes
+    needs: [detect-changes, shellcheck]
     if: ${{ needs.detect-changes.outputs.cuda == 'true' }}
     strategy:
       fail-fast: false
@@ -131,7 +145,7 @@ jobs:
           fi
 
   aws-build-llm-d:
-    needs: detect-changes
+    needs: [detect-changes, shellcheck]
     if: ${{ needs.detect-changes.outputs.aws == 'true' }}
     strategy:
       fail-fast: false
@@ -289,7 +303,7 @@ jobs:
           fi
 
   xpu-build-llm-d:
-    needs: detect-changes
+    needs: [detect-changes, shellcheck]
     if: ${{ needs.detect-changes.outputs.xpu == 'true' }}
     strategy:
       fail-fast: false

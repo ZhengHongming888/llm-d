@@ -78,7 +78,7 @@ ENV LANG=C.UTF-8 \
     UV_TORCH_BACKEND=${UV_TORCH_BACKEND:-cu${CUDA_MAJOR}${CUDA_MINOR}} \
     UV_BUILD_CONSTRAINT=/tmp/build-constraints.txt \
     UV_CONSTRAINT=/tmp/constraints.txt \
-    VIRTUAL_ENV=/opt/vllm 
+    VIRTUAL_ENV=/opt/vllm
 
 # Update base packages
 RUN apt-get -q update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y && apt-get update && apt-get clean all
@@ -207,7 +207,7 @@ RUN cd /tmp && \
         ninja install && \
         cd /tmp && rm -rf nvshmem_src*
 
-# Pin torch, so all deps are built against the same version 
+# Pin torch, so all deps are built against the same version
 # as vllm itself
 RUN --mount=type=cache,target=/root/.cache/uv \
   source ${VIRTUAL_ENV}/bin/activate && \
@@ -216,7 +216,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     numpy torch \
     pyyaml \
     types-PyYAML \
-    pytest \ 
+    pytest \
     patchelf>=0.11.0
 
 # build nixl from source to be able to use UCX from source
@@ -252,7 +252,7 @@ WORKDIR /workspace
 ARG LMCACHE_COMMIT_SHA="0db8ae4746a207a72483d716b5f82545a2ead24b"
 ARG VLLM_COMMIT_SHA="f71952c1c49fb86686b0b300b727b26282362bf4"
 
-# Define if lmcache should be built 
+# Define if lmcache should be built
 # Clone repositories with cache mounts
 RUN --mount=type=cache,target=/var/cache/git \
     git clone https://github.com/neuralmagic/LMCache.git && \
@@ -377,8 +377,6 @@ COPY --from=builder /usr/local/bin/ucx* /usr/local/bin/
 COPY --from=builder /usr/local/lib/libgdrapi.so.2.* /usr/local/lib/
 COPY --from=builder /usr/local/lib/libgdrapi.so* /usr/local/lib/
 
-RUN 
-
 # Copy nixl libraries from builder
 COPY --from=builder /usr/local/lib/x86_64-linux-gnu/libnixl* /usr/lib/
 COPY --from=builder /usr/local/lib/x86_64-linux-gnu/libstream.so /usr/lib/
@@ -479,7 +477,7 @@ ENV PATH="${VIRTUAL_ENV}/bin:/usr/local/nvidia/bin:${PATH}" \
     TORCH_NCCL_DUMP_ON_TIMEOUT=0 \
     VLLM_SKIP_P2P_CHECK=1 \
     VLLM_CACHE_ROOT=/tmp/vllm \
-    # NOTE: workaround for hang with XET. This should be removed 
+    # NOTE: workaround for hang with XET. This should be removed
     # in a future release when we get to the bottom of the issue.
     HF_HUB_DISABLE_XET=1
 
