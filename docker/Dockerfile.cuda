@@ -14,10 +14,10 @@ ARG PYTHON_VERSION
 
 ARG USE_SCCACHE=true
 
-COPY scripts/common/setup-sccache.sh /usr/local/bin/setup-sccache
+COPY docker/scripts/common/setup-sccache.sh /usr/local/bin/setup-sccache
 RUN chmod +x /usr/local/bin/setup-sccache
 
-COPY scripts/cuda/builder/install-sccache.sh /tmp/install-sccache.sh
+COPY docker/scripts/cuda/builder/install-sccache.sh /tmp/install-sccache.sh
 RUN --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
     chmod +x /tmp/install-sccache.sh && \
@@ -51,7 +51,7 @@ ENV LANG=C.UTF-8 \
 RUN dnf -q update -y && dnf clean all
 
 # Install base packages and EPEL in single layer
-COPY scripts/cuda/builder/install-base-packages.sh /tmp/install-base-packages.sh
+COPY docker/scripts/cuda/builder/install-base-packages.sh /tmp/install-base-packages.sh
 RUN chmod +x /tmp/install-base-packages.sh && \
     /tmp/install-base-packages.sh && \
     rm /tmp/install-base-packages.sh
@@ -73,7 +73,7 @@ ENV NVSHMEM_DIR="/opt/nvshmem-${NVSHMEM_VERSION}" \
     LIBRARY_PATH="/opt/nvshmem-${NVSHMEM_VERSION}/lib:${LIBRARY_PATH}"
 
 # Build and install gdrcopy
-COPY scripts/cuda/builder/build-gdrcopy.sh /tmp/build-gdrcopy.sh
+COPY docker/scripts/cuda/builder/build-gdrcopy.sh /tmp/build-gdrcopy.sh
 RUN --mount=type=cache,target=/var/cache/git \
     --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
@@ -91,7 +91,7 @@ RUN mkdir -p /wheels
 COPY patches/ /tmp/patches/
 
 # Build and install NVSHMEM from source with coreweave patch
-COPY scripts/cuda/builder/build-nvshmem.sh /tmp/build-nvshmem.sh
+COPY docker/scripts/cuda/builder/build-nvshmem.sh /tmp/build-nvshmem.sh
 RUN --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
     chmod +x /tmp/build-nvshmem.sh && \
@@ -152,7 +152,7 @@ ARG PPLX_KERNELS_SHA="12cecfda252e4e646417ac263d96e994d476ee5d"
 ARG FLASHINFER_VERSION="v0.3.1"
 
 # Build compiled packages as wheels (only ones that need build tools)
-COPY scripts/cuda/builder/build-compiled-wheels.sh /tmp/build-compiled-wheels.sh
+COPY docker/scripts/cuda/builder/build-compiled-wheels.sh /tmp/build-compiled-wheels.sh
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
@@ -247,7 +247,7 @@ ARG VLLM_PREBUILT=0
 # Dictates if we should pull precompiled binaries when installing vllm editably. These commits must be on main in vLLM.
 ARG VLLM_USE_PRECOMPILED=1
 
-COPY scripts/warn-vllm-precompiled.sh /opt/
+COPY docker/scripts/warn-vllm-precompiled.sh /opt/
 
 # Install cuda-python, nvshmem python bindings, xet
 # Install all compiled wheels (DeepEP, DeepGEMM, pplx-kernels, LMCache, nixl)
@@ -255,7 +255,7 @@ COPY scripts/warn-vllm-precompiled.sh /opt/
     # 1) install vllm from source totally editably - dev option, supports fork and commit swapping
     # 3) install vllm from source with pulling precomiled binaries (shared libraries) from the vllm wheels index - less flexible dev option, may or may not work swapping shas but faster than full editable
     # 2) install vllm from a wheel on the vllm wheels index - prod option, no flexbility
-COPY scripts/cuda/runtime/install-vllm.sh /tmp/install-vllm.sh
+COPY docker/scripts/cuda/runtime/install-vllm.sh /tmp/install-vllm.sh
 RUN --mount=type=cache,target=/var/cache/git \
     chmod +x /tmp/install-vllm.sh && \
     /tmp/install-vllm.sh && \
