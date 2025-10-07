@@ -163,7 +163,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # ============================================================================
 # RUNTIME STAGE - Minimal runtime image
 # ============================================================================
-FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-devel-ubi9 AS runtime
+FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-runtime-ubi9 AS runtime
 
 ARG CUDA_MAJOR=12
 ARG CUDA_MINOR=9
@@ -202,7 +202,8 @@ RUN dnf install -y --allowerasing \
         git \
         curl \
         jq \
-        gcc && dnf clean all
+        gcc \
+        cuda-nvcc-${CUDA_MAJOR}-${CUDA_MINOR} && dnf clean all
 
 # Copy gdrcopy libraries from builder
 COPY --from=builder /usr/lib64/libgdrapi.so.2.* /usr/lib64/
