@@ -121,9 +121,5 @@ releases:
       - name: "decode.monitoring.podmonitor.enabled"
         value: false
     {{- end }}
-    {{- if (eq .Environment.Name "gke") }}
-      - name: "decode.containers[0].image"
-        value: ghcr.io/llm-d/llm-d-gke-dev:pr-320@sha256:4e6e2ddfacd469c8e030a8d4ab58357d467cf1e852a9c0c128cf4b74136691a1
-    {{- end}}
     labels:
       kind: inference-stack
