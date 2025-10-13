@@ -12,7 +12,7 @@ ARG CUDA_MINOR=9
 ARG CUDA_PATCH=1
 ARG PYTHON_VERSION
 
-ARG USE_SCCACHE=false
+ARG USE_SCCACHE=true
 
 RUN cat > /usr/local/bin/setup-sccache <<'EOF'
 #!/bin/bash
@@ -135,7 +135,7 @@ RUN --mount=type=secret,id=subman_org \
     --mount=type=secret,id=subman_activation_key \
     subscription-manager register \
       --org "$(cat /run/secrets/subman_org)" \
-      --activationkey "$(cat /run/secrets/subman_activation_key)" --force && \
+      --activationkey "$(cat /run/secrets/subman_activation_key)" --force; \
     mkdir -p /tmp/efa && \
     cd /tmp/efa && \
     curl -O https://efa-installer.amazonaws.com/aws-efa-installer-1.43.3.tar.gz && \
