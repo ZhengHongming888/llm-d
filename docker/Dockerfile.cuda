@@ -147,7 +147,6 @@ ENV NVSHMEM_DIR="/opt/nvshmem-${NVSHMEM_VERSION}" \
     LIBRARY_PATH="/opt/nvshmem-${NVSHMEM_VERSION}/lib:${LIBRARY_PATH}"
 
 # Build and install gdrcopy
-# TODO: CUSTOM LOGGING
 RUN --mount=type=cache,target=/var/cache/git \
     --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
@@ -160,6 +159,41 @@ RUN --mount=type=cache,target=/var/cache/git \
     cd .. && rm -rf gdrcopy && \
     if [ "${USE_SCCACHE}" = "true" ]; then \
         echo "=== gdrcopy build complete - sccache stats ===" && \
+        sccache --show-stats; \
+    fi
+
+# Build and install UCX to consume version with EFA fix
+# as not present in 1.19
+ARG UCX_REPO="https://github.com/openucx/ucx.git"
+ARG UCX_VERSION="7ec95b95e524a87e81cac92f5ca8523e3966b16b"
+RUN --mount=type=cache,target=/var/cache/git \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
+    cd /tmp && \
+    source /usr/local/bin/setup-sccache && \
+    git clone "${UCX_REPO}" && \
+    cd ucx && \
+    git checkout -q "${UCX_VERSION}" && \
+    ./autogen.sh && \
+    ./contrib/configure-release \
+        --enable-shared \
+        --disable-static \
+        --disable-doxygen-doc \
+        --enable-cma \
+        --enable-devel-headers \
+        --with-cuda=/usr/local/cuda \
+        --with-verbs \
+        --with-dm \
+        --with-gdrcopy=/usr/local \
+        --enable-mt \
+        --with-efa \
+        --prefix=/usr/local && \
+    make -j$(nproc) && \
+    make install-strip && \
+    ldconfig && \
+    cd /tmp && rm -rf /tmp/ucx && \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        echo "=== UCX build complete - sccache stats ===" && \
         sccache --show-stats; \
     fi
 
@@ -221,6 +255,40 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     types-PyYAML \
     pytest \ 
     patchelf>=0.11.0
+
+ARG NIXL_REPO_URL="https://github.com/ai-dynamo/nixl.git"
+ARG NIXL_COMMIT_SHA="8f493f7e285ef84faa70775449adc757c1e63953"
+
+RUN --mount=type=cache,target=/var/cache/git \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
+    --mount=type=cache,target=/root/.cache/uv \
+    cd /tmp && \
+    source /usr/local/bin/setup-sccache && \
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib64/ && \
+    git clone "${NIXL_REPO_URL}" && \
+    cd nixl && \
+    git checkout -q "${NIXL_COMMIT_SHA}" && \
+    export PATH="${VIRTUAL_ENV}/bin:$PATH" && \
+    export PYTHON="${VIRTUAL_ENV}/bin/python" && \
+    export PKG_CONFIG_PATH="/usr/lib64/pkgconfig:/usr/share/pkgconfig:${PKG_CONFIG_PATH}" && \
+    export CUDA_HOME="/usr/local/cuda" && \
+    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs/:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu:/usr/lib64:${LD_LIBRARY_PATH}" && \
+    meson setup build --prefix=/usr/local -Dbuildtype=release && \
+    cd build && \
+    ninja && \
+    ninja install && \
+    cd .. && \
+    # Build nixl wheel and install locally
+    source ${VIRTUAL_ENV}/bin/activate && \
+    python -m build --no-isolation --wheel -o /wheels && \
+    uv pip install --no-cache-dir . && \
+    rm -rf build && \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        echo "=== NIXL build complete - sccache stats ===" && \
+        sccache --show-stats; \
+    fi
+
 
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/local.conf && \
     echo "/usr/local/lib64" >> /etc/ld.so.conf.d/local.conf && \
@@ -395,14 +463,14 @@ ARG VLLM_USE_PRECOMPILED=1
 ADD scripts/warn-vllm-precompiled.sh /opt/
 
 # Install cuda-python, nvshmem python bindings, xet
-# Install all compiled wheels (DeepEP, DeepGEMM, pplx-kernels, LMCache, nixl)
+# Install all compiled wheels (DeepEP, DeepGEMM, pplx-kernels, LMCache)
 # Installs vllm source. Supports three install modes:
     # 1) install vllm from source totally editably - dev option, supports fork and commit swapping
     # 3) install vllm from source with pulling precomiled binaries (shared libraries) from the vllm wheels index - less flexible dev option, may or may not work swapping shas but faster than full editable
     # 2) install vllm from a wheel on the vllm wheels index - prod option, no flexbility
 RUN --mount=type=cache,target=/var/cache/git \
     source /opt/vllm/bin/activate && \
-    uv pip install nixl cuda-python 'huggingface_hub[hf_xet]' && \
+    uv pip install cuda-python 'huggingface_hub[hf_xet]' && \
     uv pip install /tmp/wheels/*.whl && \
     git clone "${VLLM_REPO}" /opt/vllm-source && \
     git -C /opt/vllm-source config --system --add safe.directory /opt/vllm-source && \
