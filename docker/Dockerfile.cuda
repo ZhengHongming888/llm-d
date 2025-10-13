@@ -131,12 +131,20 @@ RUN dnf -q install -y dnf-plugins-core && \
     && dnf clean all
 
 # Install EFA
-RUN mkdir -p /tmp/efa && \
+RUN --mount=type=secret,id=subman_org \
+    --mount=type=secret,id=subman_activation_key \
+    subscription-manager register \
+      --org "$(cat /run/secrets/subman_org)" \
+      --activationkey "$(cat /run/secrets/subman_activation_key)" --force && \
+    mkdir -p /tmp/efa && \
     cd /tmp/efa && \
     curl -O https://efa-installer.amazonaws.com/aws-efa-installer-1.43.3.tar.gz && \
     tar -xf aws-efa-installer-1.43.3.tar.gz && cd aws-efa-installer && \
     ./efa_installer.sh --skip-kmod --skip-plugin --skip-limit-conf --no-verify -y && \
-    cd $HOME && rm -rf /tmp/efa
+    cd $HOME && rm -rf /tmp/efa && \
+    dnf clean all && \
+    subscription-manager unregister && \
+    rm -rf /etc/pki/entitlement/* /etc/rhsm/* /var/cache/dnf/*
 
 # Setup Python virtual environment
 RUN python${PYTHON_VERSION} -m venv /opt/vllm && \
