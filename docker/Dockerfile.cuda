@@ -163,7 +163,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # ============================================================================
 # RUNTIME STAGE - Minimal runtime image
 # ============================================================================
-FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-runtime-ubi9 AS runtime
+FROM nvcr.io/nvidia/cuda:${CUDA_MAJOR}.${CUDA_MINOR}.${CUDA_PATCH}-devel-ubi9 AS runtime
 
 ARG CUDA_MAJOR=12
 ARG CUDA_MINOR=9

@@ -8,7 +8,7 @@ set -Eeuo pipefail
 source /opt/vllm/bin/activate
 
 # install python dependencies
-uv pip install nixl "nvshmem4py-cu${CUDA_MAJOR}" cuda-python 'huggingface_hub[hf_xet]'
+uv pip install nixl cuda-python 'huggingface_hub[hf_xet]'
 
 # install compiled wheels
 uv pip install /tmp/wheels/*.whl

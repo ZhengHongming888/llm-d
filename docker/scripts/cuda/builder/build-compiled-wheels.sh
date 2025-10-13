@@ -10,7 +10,8 @@ source "${VIRTUAL_ENV}/bin/activate"
 source /usr/local/bin/setup-sccache
 
 # install build tools
-uv pip install build cuda-python numpy setuptools-scm ninja "nvshmem4py-cu${CUDA_MAJOR}"
+uv pip install build cuda-python numpy setuptools-scm ninja
+uv pip install /wheels/nvshmem4py_cu"${CUDA_MAJOR}"-*.whl
 
 cd /tmp
 
@@ -18,7 +19,7 @@ cd /tmp
 uv pip uninstall flashinfer-python || true
 git clone https://github.com/flashinfer-ai/flashinfer.git
 cd flashinfer
-uv pip install -e . --no-build-isolation
+git checkout -q "${FLASHINFER_VERSION}"
 uv build --wheel --no-build-isolation --out-dir /wheels
 cd ..
 rm -rf flashinfer
@@ -43,6 +44,7 @@ rm -rf deepgemm
 # build pplx-kernels wheel
 git clone "${PPLX_KERNELS_REPO}" pplx-kernels
 cd pplx-kernels
+git checkout "${PPLX_KERNELS_SHA}"
 NVSHMEM_PREFIX="${NVSHMEM_DIR}" uv build --wheel --out-dir /wheels
 cd ..
 rm -rf pplx-kernels
