@@ -53,7 +53,7 @@ decode:
       - name: UCX_LOG_LEVEL
         value: INFO
       - name: UCX_TLS
-        value: "efa,sockcm,rc,sm,self,cuda_copy,cuda_ipc"
+        value: "srd,rc,sm,self,cuda_copy,cuda_ipc"
       - name: VLLM_NIXL_SIDE_CHANNEL_HOST
         valueFrom:
           fieldRef:
@@ -118,7 +118,7 @@ prefill:
       - name: UCX_LOG_LEVEL
         value: INFO
       - name: UCX_TLS
-        value: "efa,sockcm,rc,sm,self,cuda_copy,cuda_ipc"
+        value: "srd,rc,sm,self,cuda_copy,cuda_ipc"
       - name: VLLM_NIXL_SIDE_CHANNEL_HOST
         valueFrom:
           fieldRef:
