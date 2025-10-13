@@ -174,7 +174,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     git clone "${UCX_REPO}" && \
     cd ucx && \
     git checkout -q "${UCX_VERSION}" && \
-    export CC="sccache gcc" CXX="sccache g++" \
+    export CC="sccache gcc" CXX="sccache g++" && \
     ./autogen.sh && \
     ./contrib/configure-release \
         --enable-shared \
