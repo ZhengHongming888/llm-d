@@ -36,7 +36,7 @@ decode:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: ghcr.io/llm-d/llm-d-cuda:v0.3.0
+    image: ghcr.io/llm-d/llm-d-cuda-dev:pr-354@sha256:12f4b9c52b37b7a36b9eca157d6515bd91f7ffda58554eb7ebb5f0a931b4a253
     modelCommand: vllmServe
     args:
       # Keep tensor-parallelism as the first set of arguments
@@ -50,6 +50,10 @@ decode:
       - "--max-model-len"
       - "32000"
     env:
+      - name: UCX_LOG_LEVEL
+        value: INFO
+      - name: UCX_TLS
+        value: "efa,sockcm,rc,sm,self,cuda_copy,cuda_ipc"
       - name: VLLM_NIXL_SIDE_CHANNEL_HOST
         valueFrom:
           fieldRef:
@@ -100,7 +104,7 @@ prefill:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: ghcr.io/llm-d/llm-d-cuda:v0.3.0
+    image: ghcr.io/llm-d/llm-d-cuda-dev:pr-354@sha256:12f4b9c52b37b7a36b9eca157d6515bd91f7ffda58554eb7ebb5f0a931b4a253
     modelCommand: vllmServe
     args:
       - "--block-size"
@@ -111,6 +115,10 @@ prefill:
       - "--max-model-len"
       - "32000"
     env:
+      - name: UCX_LOG_LEVEL
+        value: INFO
+      - name: UCX_TLS
+        value: "efa,sockcm,rc,sm,self,cuda_copy,cuda_ipc"
       - name: VLLM_NIXL_SIDE_CHANNEL_HOST
         valueFrom:
           fieldRef:
