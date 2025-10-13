@@ -215,16 +215,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     if [ "${USE_SCCACHE}" = "true" ]; then \
         echo "=== UCX build complete - sccache stats ===" && \
         sccache --show-stats; \
-    fi && \
-    printf '%s\n' \
-      /usr/local/lib64 \
-      /usr/local/lib \
-      /opt/amazon/efa/lib64 \
-    >> /etc/ld.so.conf.d/99-ucx-efa.conf  && \
-    ldconfig  && \
-    \
-    # debug step
-    ldconfig -p | grep -E 'libucp|libucs|libuct' || (echo "UCX libs not visible" && exit 1)
+    fi
 
 ENV CPPFLAGS="-I$NVSHMEM_DIR/include ${CPPFLAGS}" \
     LDFLAGS="-L$NVSHMEM_DIR/lib ${LDFLAGS}"
@@ -301,7 +292,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     export PYTHON="${VIRTUAL_ENV}/bin/python" && \
     export PKG_CONFIG_PATH="/usr/lib64/pkgconfig:/usr/share/pkgconfig:${PKG_CONFIG_PATH}" && \
     export CUDA_HOME="/usr/local/cuda" && \
-    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs/:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/lib:/usr/lib64:${LD_LIBRARY_PATH}" && \
+    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs/:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/lib:/usr/lib64:/opt/amazon/efa/lib64:${LD_LIBRARY_PATH}" && \
     export export CC="sccache gcc" CXX="sccache g++" NVCC="sccache nvcc" && \
     meson setup build --prefix=/usr/local -Dbuildtype=release && \
     cd build && \
