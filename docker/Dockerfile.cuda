@@ -130,6 +130,14 @@ RUN dnf -q install -y dnf-plugins-core && \
         rsync \
     && dnf clean all
 
+# Install EFA
+RUN mkdir -p /tmp/efa && \
+    cd /tmp/efa && \
+    curl -O https://efa-installer.amazonaws.com/aws-efa-installer-1.43.3.tar.gz && \
+    tar -xf aws-efa-installer-1.43.3.tar.gz && cd aws-efa-installer && \
+    ./efa_installer.sh -y && \
+    module load openmpi5
+
 # Setup Python virtual environment
 RUN python${PYTHON_VERSION} -m venv /opt/vllm && \
     ${VIRTUAL_ENV}/bin/pip install --progress-bar off --no-cache -U pip wheel uv meson-python ninja pybind11 build
@@ -169,6 +177,7 @@ ARG UCX_VERSION="7ec95b95e524a87e81cac92f5ca8523e3966b16b"
 RUN --mount=type=cache,target=/var/cache/git \
     --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
+    --mount=type=cache,target=/tmp/nixl-cache \
     cd /tmp && \
     source /usr/local/bin/setup-sccache && \
     git clone "${UCX_REPO}" && \
@@ -264,11 +273,10 @@ RUN --mount=type=cache,target=/var/cache/git \
     --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
     --mount=type=cache,target=/root/.cache/uv \
-    cd /tmp && \
     source /usr/local/bin/setup-sccache && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib64/ && \
-    git clone "${NIXL_REPO_URL}" && \
-    cd nixl && \
+    mkdir /opt/nixl && cd /opt/nixl && \
+    git clone "${NIXL_REPO_URL}" . && \
     git checkout -q "${NIXL_COMMIT_SHA}" && \
     export PATH="${VIRTUAL_ENV}/bin:$PATH" && \
     export PYTHON="${VIRTUAL_ENV}/bin/python" && \
