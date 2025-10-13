@@ -134,9 +134,9 @@ RUN dnf -q install -y dnf-plugins-core && \
 RUN python${PYTHON_VERSION} -m venv /opt/vllm && \
     ${VIRTUAL_ENV}/bin/pip install --progress-bar off --no-cache -U pip wheel uv meson-python ninja pybind11 build
 
-ENV LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu" \
+ENV LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/lib:/usr/local/lib64" \
     CPATH="/usr/include:/usr/local/include:/usr/local/cuda/include" \
-    PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib/x86_64-linux-gnu/pkgconfig"
+    PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig"
 
 ARG NVSHMEM_VERSION=3.3.20
 
