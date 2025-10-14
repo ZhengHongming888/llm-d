@@ -157,6 +157,8 @@ ENV CPATH=${NVSHMEM_PREFIX}/include:${CPATH}
 ENV LIBRARY_PATH=${NVSHMEM_PREFIX}/lib:${LIBRARY_PATH}
 ENV PKG_CONFIG_PATH=${NVSHMEM_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}
 
+RUN echo "bust cache"
+
 # Install UV, dependencies and NIXL (python)
 SHELL ["/bin/bash", "-ec"]
 RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin/" sh && \

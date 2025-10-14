@@ -147,7 +147,6 @@ ENV NVSHMEM_DIR="/opt/nvshmem-${NVSHMEM_VERSION}" \
     LIBRARY_PATH="/opt/nvshmem-${NVSHMEM_VERSION}/lib:${LIBRARY_PATH}"
 
 # Build and install gdrcopy
-# TODO: CUSTOM LOGGING
 RUN --mount=type=cache,target=/var/cache/git \
     --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
@@ -393,6 +392,8 @@ ARG VLLM_PREBUILT=0
 ARG VLLM_USE_PRECOMPILED=1
 
 ADD scripts/warn-vllm-precompiled.sh /opt/
+
+RUN echo "bust cache"
 
 # Install cuda-python, nvshmem python bindings, xet
 # Install all compiled wheels (DeepEP, DeepGEMM, pplx-kernels, LMCache, nixl)
