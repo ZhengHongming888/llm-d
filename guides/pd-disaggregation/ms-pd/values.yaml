@@ -50,10 +50,13 @@ decode:
       - "--max-model-len"
       - "32000"
     env:
+    # See if we can run non efa with new build
+      - name: NIXL_LOG_LEVEL
+        value: "debug"
+      - name: UCX_LOG_LEVEL
+        value: "debug"
       - name: UCX_LOG_LEVEL
         value: INFO
-      - name: UCX_TLS
-        value: "srd,rc,sm,self,cuda_copy,cuda_ipc"
       - name: VLLM_NIXL_SIDE_CHANNEL_HOST
         valueFrom:
           fieldRef:
@@ -115,10 +118,13 @@ prefill:
       - "--max-model-len"
       - "32000"
     env:
+    # See if we can run non efa with new build
+      - name: NIXL_LOG_LEVEL
+        value: "debug"
+      - name: UCX_LOG_LEVEL
+        value: "debug"
       - name: UCX_LOG_LEVEL
         value: INFO
-      - name: UCX_TLS
-        value: "srd,rc,sm,self,cuda_copy,cuda_ipc"
       - name: VLLM_NIXL_SIDE_CHANNEL_HOST
         valueFrom:
           fieldRef:
