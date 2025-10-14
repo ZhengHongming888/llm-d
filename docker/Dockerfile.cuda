@@ -446,17 +446,17 @@ COPY --from=builder /usr/local/lib/libucs* /usr/local/lib/
 COPY --from=builder /usr/local/lib/libuct* /usr/local/lib/
 COPY --from=builder /usr/local/lib/libucm* /usr/local/lib/
 COPY --from=builder /usr/local/lib/ucx/ /usr/local/lib/ucx/
-COPY --from=builder /usr/local/bin/ucx* /usr/local/bin/
+COPY --from=builder /usr/local/lib64/libucx_utils.so /usr/local/lib64/
 
 # Copy gdrcopy libraries from builder
 COPY --from=builder /usr/lib64/libgdrapi.so.2.* /usr/lib64/
 COPY --from=builder /usr/local/lib/libgdrapi.so* /usr/local/lib/
 
 # Copy nixl libraries from builder
-COPY --from=builder /usr/local/lib/x86_64-linux-gnu/libnixl* /usr/lib/
-COPY --from=builder /usr/local/lib/x86_64-linux-gnu/libstream.so /usr/lib/
-COPY --from=builder /usr/local/lib/x86_64-linux-gnu/libserdes.so /usr/lib/
-COPY --from=builder /usr/local/lib/x86_64-linux-gnu/plugins/ /usr/lib/plugins/
+COPY --from=builder /usr/local/lib64/libnixl* /usr/local/lib64/
+COPY --from=builder /usr/local/lib64/libstream.so /usr/local/lib64/
+COPY --from=builder /usr/local/lib64/libserdes.so /usr/local/lib64/
+COPY --from=builder /usr/local/lib64/plugins/ /usr/local/lib64/plugins/
 COPY --from=builder /usr/local/include/nixl* /usr/local/include/
 
 # Copy compiled NVSHMEM libraries from builder
