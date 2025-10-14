@@ -255,9 +255,7 @@ RUN --mount=type=secret,id=aws_access_key_id \
         -DGDRCOPY_HOME=/usr/local \
         -DLIBFABRIC_HOME=/opt/amazon/efa \
         -DNVSHMEM_DISABLE_CUDA_VMM=1 \
-        \
-        # this might not work, remove if causes issues
-        -DNVSHMEM_UCX_SUPPORT=1 \
+        -DNVSHMEM_UCX_SUPPORT=0 \
         .. && \
         ninja -j$(nproc) && \
         ninja install &&  \
