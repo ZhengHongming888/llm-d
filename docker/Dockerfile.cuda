@@ -13,6 +13,7 @@ ARG CUDA_PATCH=1
 ARG PYTHON_VERSION
 
 ARG USE_SCCACHE=true
+ARG NVSHMEM_CUDA_ARCHITECTURES="90a;100"
 
 COPY docker/scripts/common/setup-sccache.sh /usr/local/bin/setup-sccache
 RUN chmod +x /usr/local/bin/setup-sccache
@@ -94,6 +95,7 @@ COPY patches/ /tmp/patches/
 COPY docker/scripts/cuda/builder/build-nvshmem.sh /tmp/build-nvshmem.sh
 RUN --mount=type=secret,id=aws_access_key_id \
     --mount=type=secret,id=aws_secret_access_key \
+    NVSHMEM_CUDA_ARCHITECTURES="${NVSHMEM_CUDA_ARCHITECTURES}" \
     chmod +x /tmp/build-nvshmem.sh && \
     /tmp/build-nvshmem.sh && \
     rm /tmp/build-nvshmem.sh

@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # builds and installs NVSHMEM from source with coreweave patch
-# expects CUDA_MAJOR, NVSHMEM_VERSION, NVSHMEM_DIR env vars to be set
+# expects CUDA_MAJOR, NVSHMEM_VERSION, NVSHMEM_DIR, NVSHMEM_CUDA_ARCHITECTURES env vars to be set
 
 cd /tmp
 
@@ -24,7 +24,7 @@ cd build
 cmake \
     -G Ninja \
     -DNVSHMEM_PREFIX="${NVSHMEM_DIR}" \
-    -DCMAKE_CUDA_ARCHITECTURES="90a;100" \
+    -DCMAKE_CUDA_ARCHITECTURES="${NVSHMEM_CUDA_ARCHITECTURES}" \
     -DNVSHMEM_PMIX_SUPPORT=0 \
     -DNVSHMEM_LIBFABRIC_SUPPORT=0 \
     -DNVSHMEM_IBRC_SUPPORT=1 \
