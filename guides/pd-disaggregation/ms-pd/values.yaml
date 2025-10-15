@@ -36,7 +36,7 @@ decode:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: ghcr.io/llm-d/llm-d-cuda-dev:pr-354@sha256:cded53b4762fa5d91a7140eeb10a0b038680599024fa2dd09c5e452d54349a85
+    image: ghcr.io/llm-d/llm-d-cuda-dev:pr-354@sha256:a555aa26871af46d06c4bd3970c36b3efdb358cf15ae7b553a3968aa9d1ef059
     modelCommand: vllmServe
     args:
       # Keep tensor-parallelism as the first set of arguments
@@ -51,6 +51,10 @@ decode:
       - "32000"
     env:
     # See if we can run non efa with new build
+      - name: NCCL_DEBUG
+        value: INFO
+      - name: NCCL_DEBUG_SUBSYS
+        value: "INIT,NET,GRAPH"
       - name: NIXL_LOG_LEVEL
         value: "debug"
       - name: UCX_LOG_LEVEL
@@ -107,7 +111,7 @@ prefill:
       interval: "30s"
   containers:
   - name: "vllm"
-    image: ghcr.io/llm-d/llm-d-cuda-dev:pr-354@sha256:cded53b4762fa5d91a7140eeb10a0b038680599024fa2dd09c5e452d54349a85
+    image: ghcr.io/llm-d/llm-d-cuda-dev:pr-354@sha256:a555aa26871af46d06c4bd3970c36b3efdb358cf15ae7b553a3968aa9d1ef059
     modelCommand: vllmServe
     args:
       - "--block-size"
