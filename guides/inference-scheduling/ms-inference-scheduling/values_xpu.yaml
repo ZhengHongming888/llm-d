@@ -18,6 +18,11 @@ routing:
     connector: nixlv2
     secure: false
 
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: infra-r1-inference-gateway
+
   inferenceModel:
     create: false
 
