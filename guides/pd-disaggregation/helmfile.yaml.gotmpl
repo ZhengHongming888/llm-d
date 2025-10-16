@@ -12,6 +12,9 @@ environments:
   gke: &GKE
       values:
       - ../prereq/gateway-provider/common-configurations/gke.yaml
+  hpu: &HPU
+    values:
+      - ../prereq/gateway-provider/common-configurations/kgateway.yaml
   xpu: &XPU
     values:
       - ../prereq/gateway-provider/common-configurations/istio.yaml
@@ -86,6 +89,7 @@ releases:
   - name: {{ printf "ms-%s" $rn | quote }}
     namespace: {{ $ns }}
     chart: llm-d-modelservice/llm-d-modelservice
+
     version: v0.2.11
     installed: true
     needs:
@@ -94,6 +98,8 @@ releases:
     values:
     {{- if eq .Environment.Name "xpu" }}
       - ms-pd/values_xpu.yaml
+    {{- else if eq .Environment.Name "hpu" }}
+      - ms-pd/values_hpu.yaml
     {{- else }}
       - ms-pd/values.yaml
     {{- end }}
