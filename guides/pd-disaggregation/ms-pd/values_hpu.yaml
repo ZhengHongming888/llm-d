@@ -82,17 +82,6 @@ decode:
       - containerPort: 8200
         name: metrics
         protocol: TCP
-    resources:
-      limits:
-         cpu: "20"
-         memory: 128G
-         habana.ai/gaudi: 1
-         hugepages-2Mi: 4000Mi
-      requests:
-        cpu: "20"
-        memory: 128G
-        habana.ai/gaudi: 1
-        hugepages-2Mi: 4000Mi
     mountModelVolume: true
     volumeMounts:
       - name: metrics-volume
@@ -161,17 +150,6 @@ prefill:
       - containerPort: 8000
         name: metrics
         protocol: TCP
-    resources:
-      limits:
-        cpu: "20"
-        memory: 128G
-        habana.ai/gaudi: 1
-        hugepages-2Mi: 4000Mi
-      requests:
-        cpu: "20"
-        memory: 128G
-        habana.ai/gaudi: 1
-        hugepages-2Mi: 4000Mi
     mountModelVolume: true
     volumeMounts:
       - name: metrics-volume
