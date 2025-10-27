@@ -1,18 +1,18 @@
 FROM vllm-cpu-base
 
 
-# 安装 pkg-config
+# install pkg-config
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
  && rm -rf /var/lib/apt/lists/*
 
-# 拷贝本地的安装脚本
+# copy install_nixl to /workspace folder 
 COPY install_nixl.py /workspace/install_nixl.py
 
-# 运行脚本安装 nixl==0.6.1
+# install latest nixl with UCX package
 RUN python /workspace/install_nixl.py 
 
 
-# 改变 ENTRYPOINT
+# ENTRYPOINT
 ENTRYPOINT ["/bin/bash"]
 

@@ -35,12 +35,12 @@ routing:
 decode:
   create: true
   replicas: 1
-  #monitoring:
-  #  podmonitor:
-  #    enabled: false
-  #    portName: "metrics" # decode vLLM service port (from routing.proxy.targetPort)
-  #    path: "/metrics"
-  #    interval: "30s"
+  monitoring:
+    podmonitor:
+      enabled: false
+      portName: "metrics" # decode vLLM service port (from routing.proxy.targetPort)
+      path: "/metrics"
+      interval: "30s"
   containers:
   - name: vllm
     image: docker.io/library/vllm-cpu-env:latest
@@ -99,11 +99,11 @@ prefill:
   create: true
   replicas: 1
   #monitoring:
-  #  podmonitor:
-  #    enabled: false
-  #    portName: "metrics" # decode vLLM service port (from routing.proxy.targetPort)
-  #    path: "/metrics"
-  #    interval: "30s"
+    podmonitor:
+      enabled: false
+      portName: "metrics" # decode vLLM service port (from routing.proxy.targetPort)
+      path: "/metrics"
+      interval: "30s"
   containers:
   - name: vllm
     image: docker.io/library/vllm-cpu-env:latest
