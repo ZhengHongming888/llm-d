@@ -23,9 +23,10 @@ kubectl describe nodes minikube
 kubectl create namespace llm-d
 ```
 
-## Step 3: git clone llm-d repo… and build CPU llm-d docker image. 
+## Step 3: git clone llm-d and vllm repo… and build CPU llm-d docker image. 
 ```shell
 git clone https://github.com/llm-d/llm-d.git
+git clone https://github.com/vllm-project/vllm.git
 ```
 
 ### Build docker image for CPU llm-d
@@ -57,9 +58,9 @@ sudo mkdir -p /etc/systemd/system/containerd.service.d
 sudo vi /etc/systemd/system/containerd.service.d/proxy.conf
 # add below content
 [Service]
-Environment="HTTP_PROXY=http://proxy.ims.intel.com:911"
-Environment="HTTPS_PROXY=http://proxy.ims.intel.com:911"
-Environment="NO_PROXY=127.0.0.1,localhost,0.0.0.0,192.168.49.2"
+Environment="HTTP_PROXY=..."
+Environment="HTTPS_PROXY=..."
+Environment="NO_PROXY=127.0.0.1,localhost,0.0.0.0,..."
 # after saving above
 sudo systemctl daemon-reexec
 sudo systemctl restart containerd
@@ -71,6 +72,7 @@ sudo systemctl restart containerd
 ```shell
 
 # Install necessary tools (helm, helmfile, kubectl, yq, git, kind, etc.)
+cd llm-d
 ./guides/prereq/client-setup/install-deps.sh
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 && chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
 ```
