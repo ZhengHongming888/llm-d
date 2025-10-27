@@ -15,6 +15,9 @@ environments:
   xpu: &XPU
     values:
       - ../prereq/gateway-provider/common-configurations/istio.yaml
+  cpu: &CPU
+    values:
+      - ../prereq/gateway-provider/common-configurations/kgateway.yaml
   aks: &AKS
     <<: *IB
   default:
@@ -96,6 +99,8 @@ releases:
     values:
     {{- if eq .Environment.Name "xpu" }}
       - ms-pd/values_xpu.yaml
+    {{- else if eq .Environment.Name "cpu" }}
+      - ms-pd/values_cpu.yaml
     {{- else }}
       - ms-pd/values.yaml
     {{- end }}
