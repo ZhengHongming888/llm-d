@@ -23,7 +23,7 @@ kubectl describe nodes minikube
 kubectl create namespace llm-d
 ```
 
-## Step 3: git clone llm-d repo… and build HPU llm-d docker image. 
+## Step 3: git clone llm-d repo… and build CPU llm-d docker image. 
 ```shell
 git clone https://github.com/llm-d/llm-d.git
 ```
@@ -52,6 +52,7 @@ sudo crictl images
 if cluster image has no external internet access you can add the commands as below then cluster will have external access -
 
 ```shell
+minikube ssh
 sudo mkdir -p /etc/systemd/system/containerd.service.d
 sudo vi /etc/systemd/system/containerd.service.d/proxy.conf
 # add below content
