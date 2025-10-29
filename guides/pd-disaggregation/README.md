@@ -38,6 +38,11 @@ For very large models leveraging wide-EP, traffic for KV cache transfer may cont
 
 This guide expects 8 Nvidia GPUs of any kind, and RDMA via InfiniBand or RoCE between all pods in the workload.
 
+### Intel HPU Hardware Requirements
+
+For Intel HPU deployments:
+* Intel Gaudi2 machine with at least 2 Gaudi2 cards.
+
 ## Prerequisites
 
 - Have the [proper client tools installed on your local system](../prereq/client-setup/README.md) to use this guide.
@@ -55,6 +60,17 @@ export NAMESPACE=llm-d-pd # Or any namespace your heart desires
 cd guides/pd-disaggregation
 helmfile apply -n ${NAMESPACE}
 ```
+**For Intel HPU deployments**, use the HPU-specific environment:
+
+```bash
+export NAMESPACE=llm-d-pd
+cd guides/pd-disaggregation
+helmfile apply -e hpu -n ${NAMESPACE}
+```
+**Resource Requirements by GPU Type:**
+ * **Intel Gaudi2**: Use `habana.ai/gaudi`
+ * **Enable Gaudi2**: Use kubectl create -f https://vault.habana.ai/artifactory/docker-k8s-device-plugin/habana-k8s-device-plugin.yaml 
+
 
 **_NOTE:_** You can set the `$RELEASE_NAME_POSTFIX` env variable to change the release names. This is how we support concurrent installs. Ex: `RELEASE_NAME_POSTFIX=pd-2 helmfile apply -n ${NAMESPACE}`
 
