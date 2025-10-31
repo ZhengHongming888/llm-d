@@ -98,7 +98,7 @@ decode:
 prefill:
   create: true
   replicas: 1
-  #monitoring:
+  monitoring:
     podmonitor:
       enabled: false
       portName: "metrics" # decode vLLM service port (from routing.proxy.targetPort)
