@@ -29,16 +29,12 @@ git clone https://github.com/llm-d/llm-d.git
 git clone https://github.com/vllm-project/vllm.git
 ```
 
-### Build docker image for CPU llm-d
-```shell
-cd vllm
-docker build --no-cache -f docker/Dockerfile.cpu --build-arg VLLM_CPU_AVX512BF16=false --build-arg VLLM_CPU_AVX512VNNI=false --build-arg VLLM_CPU_DISABLE_AVX512=false --tag vllm-cpu-base --target vllm-openai .
-cd ..
+### Build docker image for CPU llm-d (Merged two steps into one Dockerfile.cpu now)
 
+```shell
 #build vllm-cpu-env docker image with latest nixl and UCX …”
-cd llm-d/docker
-docker build --no-cache -f Dockerfile.cpu.nixl -t vllm-cpu-env .
-cd ../..
+cd llm-d
+docker build   --no-cache --build-arg http_proxy=xxx   --build-arg https_proxy=xxx   --build-arg no_proxy=localhost,127.0.0.1,0.0.0.0   -f docker/Dockerfile.cpu   --build-arg VLLM_CPU_AVX512BF16=false   --build-arg VLLM_CPU_AVX512VNNI=false   --build-arg VLLM_CPU_DISABLE_AVX512=false   --tag vllm-cpu-env   --target vllm-cpu-env .
 ```
 
 ### Load image into cluster

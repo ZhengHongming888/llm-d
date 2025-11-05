@@ -110,7 +110,7 @@ buildah-build: check-builder ## Build and push image (multi-arch if supported)
 .PHONY:	image-build
 image-build: check-container-tool ## Build Docker image using $(CONTAINER_TOOL)
 	@printf "\033[33;1m==== Building Docker image $(IMG) ====\033[0m\n"
-	$(CONTAINER_TOOL) build --progress=plain --platform $(PLATFORMS) -t $(IMG) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) --build-arg http_proxy=http://proxy.ims.intel.com:911   --build-arg https_proxy=http://proxy.ims.intel.com:911   --build-arg no_proxy=localhost,127.0.0.1,0.0.0.0 .
+	$(CONTAINER_TOOL) build --progress=plain --platform $(PLATFORMS) -t $(IMG) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) .
 
 .PHONY: image-push
 image-push: check-container-tool ## Push Docker image $(IMG) to registry
