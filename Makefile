@@ -5,6 +5,8 @@ PROJECT_NAME ?= llm-d
 DOCKERFILE_DIR = docker
 ifeq ($(DEVICE), xpu)
 	DOCKERFILE ?= Dockerfile.xpu
+else ifeq ($(DEVICE), cpu)
+	DOCKERFILE ?= Dockerfile.cpu
 else ifeq ($(DEVICE), cuda-efa)
 	DOCKERFILE ?= Dockerfile.aws
 else
@@ -15,7 +17,7 @@ VERSION ?= v0.2.1
 # New tag to use if you would like to use `make image-retag`
 NEW_TAG ?= sha256...
 
-# DEVICE, options: ['cuda', 'xpu', 'cuda-efa']
+# DEVICE, options: ['cuda', 'xpu', 'cpu','cuda-efa']
 DEVICE ?= cuda
 
 IMAGE_BASE ?= ghcr.io/llm-d/$(PROJECT_NAME)-$(DEVICE)
@@ -108,7 +110,7 @@ buildah-build: check-builder ## Build and push image (multi-arch if supported)
 .PHONY:	image-build
 image-build: check-container-tool ## Build Docker image using $(CONTAINER_TOOL)
 	@printf "\033[33;1m==== Building Docker image $(IMG) ====\033[0m\n"
-	$(CONTAINER_TOOL) build --progress=plain --platform $(PLATFORMS) -t $(IMG) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) .
+	$(CONTAINER_TOOL) build --progress=plain --platform $(PLATFORMS) -t $(IMG) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) --build-arg http_proxy=http://proxy.ims.intel.com:911   --build-arg https_proxy=http://proxy.ims.intel.com:911   --build-arg no_proxy=localhost,127.0.0.1,0.0.0.0 .
 
 .PHONY: image-push
 image-push: check-container-tool ## Push Docker image $(IMG) to registry
