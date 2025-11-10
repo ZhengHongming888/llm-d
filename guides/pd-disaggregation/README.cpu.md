@@ -16,7 +16,7 @@ kubectl delete namespace llm-d
 minikube delete --all
 ```
 
-## Step 2: create minikube cluster with habana plugin supported
+## Step 2: Create minikube cluster
 ```shell
 minikube start --container-runtime=containerd  --cpus=64 --memory=128g --disk-size=100g
 kubectl describe nodes minikube
