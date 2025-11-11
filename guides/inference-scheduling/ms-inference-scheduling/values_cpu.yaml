@@ -1,4 +1,4 @@
-# Simplified Intel XPU configuration using imageDefault mode
+# Simplified Intel CPU configuration using imageDefault mode
 # This configuration lets the chart handle most vLLM parameters automatically
 
 modelArtifacts:
@@ -115,9 +115,9 @@ decode:
     - name: torch-compile-cache
       emptyDir: {}
 
-# Disable prefill for simple XPU example
+# Disable prefill for simple CPU example
 prefill:
   create: false
 
-# When true, use LeaderWorkerSet for multi-node XPU setups
+# When true, use LeaderWorkerSet for multi-node CPU setups
 multinode: false
