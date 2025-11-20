@@ -102,7 +102,7 @@ CMD ["/bin/bash"]
 # ============================================================
 # Step 2: Build vllm-cpu-env with nixl + UCX
 # ============================================================
-FROM vllm-build AS vllm-cpu-env
+FROM vllm-build
 
 RUN --mount=type=bind,from=vllm-build,src=/workspace/vllm/dist,target=dist \
     pip install dist/*.whl
