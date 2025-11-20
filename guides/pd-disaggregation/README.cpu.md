@@ -207,3 +207,14 @@ I1112 21:35:11.208192       1 connector_nixlv2.go:103] "sending request to prefi
 I1112 21:35:12.125625       1 connector_nixlv2.go:129] "received prefiller response" logger="proxy server" kv_transfer_params={"do_remote_decode":false,"do_remote_prefill":true,"remote_block_ids":[8],"remote_engine_id":"5f443848-0eda-46d6-a5fe-a293deb30eca","remote_host":"10.244.0.29","remote_port":5600,"tp_size":1}
 
 ```
+
+## Step 13: Destroy PD Disaggregation
+
+```shell
+# Navigate to PD disaggregation guide directory
+cd guides/pd-disaggregation
+
+# Destroy Intel CPU PD disaggregation configuration
+helmfile destroy -e cpu -n ${NAMESPACE}
+```
+
