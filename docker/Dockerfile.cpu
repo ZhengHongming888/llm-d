@@ -14,7 +14,7 @@ RUN apt-get install -y ca-certificates && update-ca-certificates && \
     git config --global http.sslVerify false
 
 
-# Clone vLLM and build for XPU
+# Clone vLLM and build for CPU
 WORKDIR /workspace
 RUN --mount=type=cache,target=/var/cache/git \
     git clone https://github.com/vllm-project/vllm.git && \
@@ -113,7 +113,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Copy install_nixl.py script
-COPY docker/install_nixl.py /workspace/install_nixl.py
+COPY docker/scripts/cpu/install_nixl.py /workspace/install_nixl.py
 
 # Install nixl + UCX
 RUN python3 /workspace/install_nixl.py
